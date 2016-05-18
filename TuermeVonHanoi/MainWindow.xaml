@@ -1,0 +1,33 @@
+﻿<Window x:Class="TuermeVonHanoi.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TuermeVonHanoi"
+        mc:Ignorable="d"
+        Title="Türme von Hanoi" Height="370" Width="525">
+    <Grid>
+        <Button x:Name="button" Content="Solve" HorizontalAlignment="Left" Height="25" Margin="10,294,0,0" VerticalAlignment="Top" Width="60"/>
+        <Button x:Name="button_Copy" Content="Refresh" HorizontalAlignment="Left" Height="25" Margin="75,294,0,0" VerticalAlignment="Top" Width="60" Click="button_Copy_Click"/>
+
+        <Label x:Name="label" Content="with" HorizontalAlignment="Left" Height="25" Margin="140,294,0,0" VerticalAlignment="Top" Width="32"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="20" Margin="172,297,0,0" TextWrapping="Wrap" Text="{Binding DiscCount, FallbackValue=7}" VerticalAlignment="Top" Width="20"/>
+        <Label x:Name="label_Copy" Content="discs" HorizontalAlignment="Left" Height="25" Margin="192,294,0,0" VerticalAlignment="Top" Width="35"/>
+
+        <!-- Left panel -->
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="259" Margin="10,13,0,0" VerticalAlignment="Top" Width="140">
+            <StackPanel Name="LeftPanel"/>
+        </Border>
+
+        <!-- Mid panel -->
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="259" Margin="183,13,0,0" VerticalAlignment="Top" Width="140">
+            <StackPanel Name="MidPanel"/>
+        </Border>
+
+        <!-- Right panel -->
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="259" Margin="357,13,0,0" VerticalAlignment="Top" Width="140">
+            <StackPanel Name="RightPanel"/>
+        </Border>
+
+    </Grid>
+</Window>
