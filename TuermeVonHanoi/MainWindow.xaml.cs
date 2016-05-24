@@ -50,7 +50,6 @@ namespace TuermeVonHanoi
 
         private void LeftPanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Console.WriteLine("LeftPanel_MouseLeftButtonDown: Called");
             if (_firstPanel == null)
             {
                 Rectangle rect = this.LeftPanel.Children.OfType<Rectangle>().LastOrDefault();
@@ -68,20 +67,17 @@ namespace TuermeVonHanoi
 
         private void MidPanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Console.WriteLine("MidPanel_MouseLeftButtonDown: Called");
             if (_firstPanel == null)
             {
                 Rectangle rect = MidPanel.Children.OfType<Rectangle>().LastOrDefault();
 
                 if (rect == null) return;
-                rect.Fill = new SolidColorBrush(System.Windows.Media.Colors.CadetBlue);
+                rect.Fill = new SolidColorBrush(Colors.CadetBlue);
                 _firstPanel = this.MidPanel;
             }
             else
             {
-                Console.WriteLine("MidPanel_MouseLeftButtonDown: Called - 2 Click");
                 moveRectFromTo(_firstPanel, this.MidPanel);
-                Console.WriteLine("MidPanel_MouseLeftButtonDown: Moved");
                 _firstPanel = null;
             }
         }
@@ -169,8 +165,13 @@ namespace TuermeVonHanoi
             Rectangle rect = get(canvasFrom);
             // if no rectangle on canvas -> return
             if (rect == null) return;
+
+            Rectangle rectOnTarget = canvasTo.Children.OfType<Rectangle>().LastOrDefault();
+
+            Canvas to = rectOnTarget == null ? canvasTo : rectOnTarget.Width < rect.Width ? canvasFrom : canvasTo;
+
             // put rectangle to other canvas
-            put(rect, canvasTo);
+            put(rect, to);
         }
 
         private void put(Rectangle rect, Canvas panel)
@@ -191,6 +192,10 @@ namespace TuermeVonHanoi
                 Canvas.SetTop(rect, _rightPos * _recHeight);
                 _rightPos--;
             }
+
+            // set color to remove selection
+            rect.Fill = new SolidColorBrush(Colors.YellowGreen);
+
             panel.Children.Add(rect);
         }
 
@@ -198,8 +203,6 @@ namespace TuermeVonHanoi
         {
             // get last added rectangle on canvas
             Rectangle rect = panel.Children.OfType<Rectangle>().LastOrDefault();
-            // set color to remove selection
-            rect.Fill = new SolidColorBrush(Colors.YellowGreen);
             // remove it from canvas
             panel.Children.Remove(rect);
 
