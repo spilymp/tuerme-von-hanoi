@@ -8,7 +8,7 @@
         Title="Türme von Hanoi" Height="370" Width="525">
     <Grid>
         <!-- solve button -->
-        <Button x:Name="button" Content="Solve" HorizontalAlignment="Left" Height="25" Margin="10,294,0,0" VerticalAlignment="Top" Width="60"/>
+        <Button x:Name="button" Content="Solve" HorizontalAlignment="Left" Height="25" Margin="10,294,0,0" VerticalAlignment="Top" Width="60" Click="button_Solve_Click"/>
         <!-- refresh button -->
         <Button x:Name="button_Copy" Content="Refresh" HorizontalAlignment="Left" Height="25" Margin="75,294,0,0" VerticalAlignment="Top" Width="60" Click="button_Refresh_Click"/>
 

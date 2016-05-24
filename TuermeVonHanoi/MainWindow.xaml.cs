@@ -43,6 +43,15 @@ namespace TuermeVonHanoi
         /**
         * UI Element Funktionen
         */
+        private void button_Solve_Click(object sender, RoutedEventArgs e)
+        {
+            refresh();
+            System.Threading.Tasks.Task t = new System.Threading.Tasks.Task(() =>
+            {
+                solve(LeftPanel, RightPanel, MidPanel, discCount);
+            }); t.Start();
+        }
+
         private void button_Refresh_Click(object sender, RoutedEventArgs e)
         {
             refresh();
@@ -174,15 +183,15 @@ namespace TuermeVonHanoi
             put(rect, to);
         }
 
-        private void put(Rectangle rect, Canvas panel)
+        private void put(Rectangle rect, Canvas canvas)
         {
             // positioning
-            if (panel == LeftPanel)
+            if (canvas == LeftPanel)
             {
                 Canvas.SetTop(rect, _leftPos * _recHeight);
                 _leftPos--;
             }
-            else if (panel == MidPanel)
+            else if (canvas == MidPanel)
             {
                 Canvas.SetTop(rect, _midPos * _recHeight);
                 _midPos--;
@@ -196,22 +205,35 @@ namespace TuermeVonHanoi
             // set color to remove selection
             rect.Fill = new SolidColorBrush(Colors.YellowGreen);
 
-            panel.Children.Add(rect);
+            canvas.Children.Add(rect);
         }
 
-        private Rectangle get(Canvas panel)
+        private Rectangle get(Canvas canvas)
         {
             // get last added rectangle on canvas
-            Rectangle rect = panel.Children.OfType<Rectangle>().LastOrDefault();
+            Rectangle rect = canvas.Children.OfType<Rectangle>().LastOrDefault();
             // remove it from canvas
-            panel.Children.Remove(rect);
+            canvas.Children.Remove(rect);
 
             // positioning
-            if (panel == LeftPanel) _leftPos++;
-            else if (panel == MidPanel) _midPos++;
+            if (canvas == LeftPanel) _leftPos++;
+            else if (canvas == MidPanel) _midPos++;
             else _rightPos++;
 
             return rect;
+        }
+
+        private void solve(Canvas start, Canvas end, Canvas cache, int height)
+        {
+            if (height > 1) solve(start, cache, end, height - 1);
+            this.Dispatcher.BeginInvoke(
+                System.Windows.Threading.DispatcherPriority.Background,
+                new Action(() => {
+                    moveRectFromTo(start, end);
+                    })
+                    );
+            System.Threading.Thread.Sleep(1000);
+            if (height > 1) solve(cache, end, start, height - 1);
         }
     }
 }
