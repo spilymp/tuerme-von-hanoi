@@ -52,7 +52,7 @@ namespace TuermeVonHanoi
             Console.WriteLine("LeftPanel_MouseLeftButtonDown: Called");
             if (_firstPanel == null)
             {
-                Rectangle rect = this.LeftPanel.Children.OfType<Rectangle>().FirstOrDefault();
+                Rectangle rect = this.LeftPanel.Children.OfType<Rectangle>().LastOrDefault();
 
                 if (rect == null) return;
                 rect.Fill = new SolidColorBrush(System.Windows.Media.Colors.CadetBlue);
@@ -70,7 +70,7 @@ namespace TuermeVonHanoi
             Console.WriteLine("MidPanel_MouseLeftButtonDown: Called");
             if (_firstPanel == null)
             {
-                Rectangle rect = MidPanel.Children.OfType<Rectangle>().FirstOrDefault();
+                Rectangle rect = MidPanel.Children.OfType<Rectangle>().LastOrDefault();
 
                 if (rect == null) return;
                 rect.Fill = new SolidColorBrush(System.Windows.Media.Colors.CadetBlue);
@@ -89,10 +89,10 @@ namespace TuermeVonHanoi
         {
             if (_firstPanel == null)
             {
-                Rectangle rect = this.RightPanel.Children.OfType<Rectangle>().FirstOrDefault();
+                Rectangle rect = this.RightPanel.Children.OfType<Rectangle>().LastOrDefault();
 
                 if (rect == null) return;
-                rect.Fill = new SolidColorBrush(System.Windows.Media.Colors.CadetBlue);
+                rect.Fill = new SolidColorBrush(Colors.CadetBlue);
                 _firstPanel = RightPanel;
             }
             else
@@ -127,20 +127,20 @@ namespace TuermeVonHanoi
             int width;
 
             // create rectangles
-            for (int i = 0; i < discCount; i++)
+            for (int i = discCount; i > 0; i--)
             {
                 // rectangle width
                 width = minWidth + (i * widthReduce);
 
                 Rectangle rect = createNewRect(width, new Thickness(0), _recHeight);
-                Canvas.SetTop(rect, i * _recHeight);
+                Canvas.SetTop(rect, (i-1) * _recHeight);
                 Canvas.SetLeft(rect, (maxWidth - width) / 2);
                 LeftPanel.Children.Add(rect);
-                await Task.Delay(2000);
+                //await Task.Delay(2000);
             }
 
             // set positions
-            _leftPos = 0;
+            _leftPos = -1;
             _midPos = discCount-1;
             _rightPos = discCount-1;
         }
@@ -191,9 +191,9 @@ namespace TuermeVonHanoi
 
         private Rectangle get(Canvas panel)
         {
-            Rectangle rect = panel.Children.OfType<Rectangle>().FirstOrDefault();
+            Rectangle rect = panel.Children.OfType<Rectangle>().LastOrDefault();
             Console.WriteLine("get - " + rect == null);
-            rect.Fill = new SolidColorBrush(System.Windows.Media.Colors.YellowGreen);
+            rect.Fill = new SolidColorBrush(Colors.YellowGreen);
             panel.Children.Remove(rect);
 
             if (panel == LeftPanel)
