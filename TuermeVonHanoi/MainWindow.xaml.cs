@@ -57,7 +57,7 @@ namespace TuermeVonHanoi
             refresh();
         }
 
-        private void LeftPanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void LeftCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (_firstPanel == null)
             {
@@ -74,7 +74,7 @@ namespace TuermeVonHanoi
             }
         }
 
-        private void MidPanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MidCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (_firstPanel == null)
             {
@@ -91,7 +91,7 @@ namespace TuermeVonHanoi
             }
         }
 
-        private void RightPanel_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void RightCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (_firstPanel == null)
             {
@@ -123,7 +123,7 @@ namespace TuermeVonHanoi
             this.RightPanel.Children.Clear();
 
             // calculate height
-            int maxHeight = 219;
+            int maxHeight = 220;
             _recHeight = maxHeight / discCount;
 
             // calculate width
@@ -141,8 +141,8 @@ namespace TuermeVonHanoi
                 // draw rectangles
                 Rectangle rect = createNewRect(width, _recHeight);
                 // set position
-                Canvas.SetTop(rect, (i - 1) * _recHeight);
-                Canvas.SetLeft(rect, (maxWidth - width) / 2);
+                Canvas.SetTop(rect, (i - 1) * _recHeight + 20);
+                Canvas.SetLeft(rect, (maxWidth - width) / 2 + 7);
                 // draw on canvas
                 LeftPanel.Children.Add(rect);
             }
@@ -185,22 +185,27 @@ namespace TuermeVonHanoi
 
         private void put(Rectangle rect, Canvas canvas)
         {
+            int marginTop = 20;
+            int factor;
+
             // positioning
             if (canvas == LeftPanel)
             {
-                Canvas.SetTop(rect, _leftPos * _recHeight);
+                factor = _leftPos;
                 _leftPos--;
             }
             else if (canvas == MidPanel)
             {
-                Canvas.SetTop(rect, _midPos * _recHeight);
+                factor = _midPos;
                 _midPos--;
             }
             else
             {
-                Canvas.SetTop(rect, _rightPos * _recHeight);
+                factor = _rightPos;
                 _rightPos--;
             }
+
+            Canvas.SetTop(rect, factor * _recHeight + marginTop);
 
             // set color to remove selection
             rect.Fill = new SolidColorBrush(Colors.YellowGreen);
@@ -232,7 +237,7 @@ namespace TuermeVonHanoi
                     moveRectFromTo(start, end);
                     })
                     );
-            System.Threading.Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(500);
             if (height > 1) solve(cache, end, start, height - 1);
         }
     }

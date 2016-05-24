@@ -16,20 +16,14 @@
         <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="20" Margin="172,297,0,0" TextWrapping="Wrap" Text="{Binding DiscCount, FallbackValue=7}" VerticalAlignment="Top" Width="20"/>
         <Label x:Name="label_Copy" Content="discs" HorizontalAlignment="Left" Height="25" Margin="192,294,0,0" VerticalAlignment="Top" Width="35"/>
 
-        <!-- Left panel -->
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="259" Margin="10,13,0,0" VerticalAlignment="Top" Width="140">
-            <Canvas Name="LeftPanel" AllowDrop="True" MouseLeftButtonDown="LeftPanel_MouseLeftButtonDown" Background="White" Margin="10,0,10,20" VerticalAlignment="Bottom" Height="219"/>
-        </Border>
+        <!-- left canvas -->
+        <Canvas Name="LeftPanel" AllowDrop="True" MouseLeftButtonDown="LeftCanvas_MouseLeftButtonDown" Background="#FFF0F0F0" Margin="10,0,367,69" VerticalAlignment="Bottom" Height="260"/>
 
-        <!-- Mid panel -->
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="259" Margin="183,13,0,0" VerticalAlignment="Top" Width="140">
-            <Canvas Name="MidPanel" AllowDrop="True" Background="White" MouseLeftButtonDown="MidPanel_MouseLeftButtonDown" Margin="10,0,10,20" VerticalAlignment="Bottom" Height="219"/>
-        </Border>
+        <!-- mid canvas -->
+        <Canvas Name="MidPanel" AllowDrop="True" Background="#FFF0F0F0" MouseLeftButtonDown="MidCanvas_MouseLeftButtonDown" Margin="184,0,193,69" VerticalAlignment="Bottom" Height="260"/>
 
-        <!-- Right panel -->
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="259" Margin="357,13,0,0" VerticalAlignment="Top" Width="140">
-            <Canvas Name="RightPanel" Background="White" MouseLeftButtonDown="RightPanel_MouseLeftButtonDown" Margin="10,0,10,20" VerticalAlignment="Bottom" Height="219"/>
-        </Border>
+        <!-- right canvas -->
+        <Canvas Name="RightPanel" Background="#FFF0F0F0" MouseLeftButtonDown="RightCanvas_MouseLeftButtonDown" Margin="357,0,20,69" VerticalAlignment="Bottom" Height="260"/>
 
     </Grid>
 </Window>
