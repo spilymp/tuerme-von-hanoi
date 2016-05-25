@@ -5,25 +5,51 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TuermeVonHanoi"
         mc:Ignorable="d"
-        Title="Türme von Hanoi" Height="370" Width="525">
-    <Grid>
-        <!-- solve button -->
-        <Button x:Name="button" Content="Solve" HorizontalAlignment="Left" Height="25" Margin="10,294,0,0" VerticalAlignment="Top" Width="60" Click="button_Solve_Click"/>
-        <!-- refresh button -->
-        <Button x:Name="button_Copy" Content="Refresh" HorizontalAlignment="Left" Height="25" Margin="75,294,0,0" VerticalAlignment="Top" Width="60" Click="button_Refresh_Click"/>
+        Title="Türme von Hanoi" Height="400" Width="460" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="300" MinHeight="300" HorizontalContentAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+    <Window.Background>
+        <SolidColorBrush Color="White" />
+    </Window.Background>
+    <Window.Resources>
+        <Style TargetType="{x:Type Canvas}">
+            <Setter Property="Canvas.Margin" Value="10" />
+        </Style>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Button.Margin" Value="10,0,10,10" />
+        </Style>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="TextBlock.Margin" Value="10,0,10,10" />
+            <Setter Property="TextBlock.TextAlignment" Value="Center" />
+            <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+        </Style>
+    </Window.Resources>
+    <Grid x:Name="main">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" MinHeight="300" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="150" />
+            <ColumnDefinition Width="Auto" MinWidth="150" />
+            <ColumnDefinition Width="Auto" MinWidth="150" />
+        </Grid.ColumnDefinitions>
 
-        <Label x:Name="label" Content="with" HorizontalAlignment="Left" Height="25" Margin="140,294,0,0" VerticalAlignment="Top" Width="32"/>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="20" Margin="172,297,0,0" TextWrapping="Wrap" Text="{Binding DiscCount, FallbackValue=7}" VerticalAlignment="Top" Width="20"/>
-        <Label x:Name="label_Copy" Content="discs" HorizontalAlignment="Left" Height="25" Margin="192,294,0,0" VerticalAlignment="Top" Width="35"/>
+        <Button x:Name="button" Grid.Row="1" Grid.Column="0" Content="Solve" Click="button_Solve_Click" IsEnabled="True"/>
+        <Button x:Name="button_Copy" Grid.Row="1" Grid.Column="1" Content="Refresh" Click="button_Refresh_Click" IsEnabled="True"/>
+
+        <TextBlock x:Name="label" Grid.Row="1" Grid.Column="2" Margin="20,0,0,10">
+            With
+            <TextBox x:Name="textBox" TextWrapping="Wrap" Text="{Binding DiscCount, FallbackValue=7}" />
+            discs.
+        </TextBlock>
 
         <!-- left canvas -->
-        <Canvas Name="LeftPanel" AllowDrop="True" MouseLeftButtonDown="LeftCanvas_MouseLeftButtonDown" Background="#FFF0F0F0" Margin="10,0,367,69" VerticalAlignment="Bottom" Height="260"/>
+        <Canvas Name="LeftPanel" Grid.Row="0" AllowDrop="True" MouseLeftButtonDown="LeftCanvas_MouseLeftButtonDown" Background="#FFF0F0F0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" MinWidth="100" MinHeight="300"/>
 
         <!-- mid canvas -->
-        <Canvas Name="MidPanel" AllowDrop="True" Background="#FFF0F0F0" MouseLeftButtonDown="MidCanvas_MouseLeftButtonDown" Margin="184,0,193,69" VerticalAlignment="Bottom" Height="260"/>
+        <Canvas Name="MidPanel" Grid.Row="0" Grid.Column="1" AllowDrop="True" MouseLeftButtonDown="MidCanvas_MouseLeftButtonDown" Background="#FFF0F0F0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" MinWidth="100" MinHeight="300"/>
 
         <!-- right canvas -->
-        <Canvas Name="RightPanel" Background="#FFF0F0F0" MouseLeftButtonDown="RightCanvas_MouseLeftButtonDown" Margin="357,0,20,69" VerticalAlignment="Bottom" Height="260"/>
+        <Canvas Name="RightPanel" Grid.Row="0" Grid.Column="2" AllowDrop="True" MouseLeftButtonDown="RightCanvas_MouseLeftButtonDown" Background="#FFF0F0F0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" MinWidth="100" MinHeight="300"/>
 
     </Grid>
 </Window>
