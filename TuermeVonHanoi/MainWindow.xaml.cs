@@ -34,6 +34,9 @@ namespace TuermeVonHanoi
 
         private int _recHeight;
 
+        // Threading
+        private System.Threading.Tasks.Task t;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -46,10 +49,29 @@ namespace TuermeVonHanoi
         private void button_Solve_Click(object sender, RoutedEventArgs e)
         {
             refresh();
-            System.Threading.Tasks.Task t = new System.Threading.Tasks.Task(() =>
+
+            this.button_Solve.Visibility = System.Windows.Visibility.Hidden;
+            this.button_Solve.IsEnabled = false;
+            this.button_Cancel.Visibility = System.Windows.Visibility.Visible;
+            this.button_Cancel.IsEnabled = true;
+            this.button_Refresh.IsEnabled = false;
+
+            t = new System.Threading.Tasks.Task(() =>
             {
                 solve(LeftPanel, RightPanel, MidPanel, discCount);
-            }); t.Start();
+            });
+            t.Start();
+        }
+
+        private void button_Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            this.button_Solve.Visibility = System.Windows.Visibility.Visible;
+            this.button_Solve.IsEnabled = true;
+            this.button_Cancel.Visibility = System.Windows.Visibility.Hidden;
+            this.button_Cancel.IsEnabled = false;
+            this.button_Refresh.IsEnabled = true;
+
+            refresh();
         }
 
         private void button_Refresh_Click(object sender, RoutedEventArgs e)
@@ -112,7 +134,7 @@ namespace TuermeVonHanoi
         * Allgemeine Funktionen
         */
         // Löscht alle Elemente in den Panels und stellt die Ausgangssituation wieder her.
-        public async void refresh()
+        public void refresh()
         {
             // set amount of discs
             discCount = int.Parse(this.textBox.Text);
@@ -123,11 +145,10 @@ namespace TuermeVonHanoi
             this.RightPanel.Children.Clear();
 
             // calculate height
-            int maxHeight = 220;
-            _recHeight = maxHeight / discCount;
+            _recHeight = (int)(this.LeftPanel.ActualHeight * 0.9) / discCount;
 
             // calculate width
-            int maxWidth = 120;
+            int maxWidth = (int)(this.LeftPanel.ActualWidth * 0.9);
             int minWidth = 5;
             int widthReduce = (maxWidth - minWidth) / discCount;
             int width;
@@ -233,11 +254,12 @@ namespace TuermeVonHanoi
             if (height > 1) solve(start, cache, end, height - 1);
             this.Dispatcher.BeginInvoke(
                 System.Windows.Threading.DispatcherPriority.Background,
-                new Action(() => {
+                new Action(() =>
+                {
                     moveRectFromTo(start, end);
-                    })
+                })
                     );
-            System.Threading.Thread.Sleep(500);
+            System.Threading.Thread.Sleep(400);
             if (height > 1) solve(cache, end, start, height - 1);
         }
     }

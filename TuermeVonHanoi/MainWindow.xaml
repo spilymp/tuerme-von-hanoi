@@ -33,12 +33,13 @@
             <ColumnDefinition Width="Auto" MinWidth="150" />
         </Grid.ColumnDefinitions>
 
-        <Button x:Name="button" Grid.Row="1" Grid.Column="0" Content="Solve" Click="button_Solve_Click" IsEnabled="True"/>
-        <Button x:Name="button_Copy" Grid.Row="1" Grid.Column="1" Content="Refresh" Click="button_Refresh_Click" IsEnabled="True"/>
+        <Button x:Name="button_Solve" Grid.Row="1" Grid.Column="0" Content="Solve" Click="button_Solve_Click" IsEnabled="True" Visibility="Visible"/>
+        <Button x:Name="button_Cancel" Grid.Row="1" Grid.Column="0" Content="Cancel" Click="button_Cancel_Click" IsEnabled="False" Visibility="Hidden"/>
+        <Button x:Name="button_Refresh" Grid.Row="1" Grid.Column="1" Content="Refresh" Click="button_Refresh_Click" IsEnabled="True"/>
 
         <TextBlock x:Name="label" Grid.Row="1" Grid.Column="2" Margin="20,0,0,10">
             With
-            <TextBox x:Name="textBox" TextWrapping="Wrap" Text="{Binding DiscCount, FallbackValue=7}" />
+            <TextBox x:Name="textBox" TextWrapping="Wrap" Text="{Binding discCount, FallbackValue=7}" />
             discs.
         </TextBlock>
 
