@@ -33,7 +33,6 @@ namespace TuermeVonHanoi
         private int _rightPos;
 
         private int _recHeight;
-
         // Threading
         private System.Threading.Tasks.Task t;
 
@@ -65,6 +64,11 @@ namespace TuermeVonHanoi
 
         private void button_Cancel_Click(object sender, RoutedEventArgs e)
         {
+            cancel();
+        }
+
+        private void cancel()
+        {
             this.button_Solve.Visibility = System.Windows.Visibility.Visible;
             this.button_Solve.IsEnabled = true;
             this.button_Cancel.Visibility = System.Windows.Visibility.Hidden;
@@ -73,10 +77,11 @@ namespace TuermeVonHanoi
 
             refresh();
         }
+        
 
         private void button_Refresh_Click(object sender, RoutedEventArgs e)
         {
-            refresh();
+            cancel();
         }
 
         private void LeftCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -138,6 +143,9 @@ namespace TuermeVonHanoi
         {
             // set amount of discs
             discCount = int.Parse(this.textBox.Text);
+
+
+            this.Dialog.Visibility = System.Windows.Visibility.Hidden;
 
             // reset all panels
             this.LeftPanel.Children.Clear();
@@ -251,16 +259,29 @@ namespace TuermeVonHanoi
 
         private void solve(Canvas start, Canvas end, Canvas cache, int height)
         {
+          
             if (height > 1) solve(start, cache, end, height - 1);
             this.Dispatcher.BeginInvoke(
                 System.Windows.Threading.DispatcherPriority.Background,
                 new Action(() =>
                 {
                     moveRectFromTo(start, end);
+                    isFinish();
                 })
                     );
             System.Threading.Thread.Sleep(400);
             if (height > 1) solve(cache, end, start, height - 1);
+        }
+
+        public void isFinish()
+        {
+            int count = (int) this.RightPanel.Children.Count;
+
+            if(count == discCount)
+            {
+                this.Dialog.Visibility = System.Windows.Visibility.Visible;
+            }
+
         }
     }
 }

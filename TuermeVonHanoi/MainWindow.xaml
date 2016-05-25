@@ -22,7 +22,8 @@
             <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
         </Style>
     </Window.Resources>
-    <Grid x:Name="main">
+
+    <Grid x:Name="main" Visibility="Visible">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" MinHeight="300" />
             <RowDefinition Height="Auto" />
@@ -32,6 +33,11 @@
             <ColumnDefinition Width="Auto" MinWidth="150" />
             <ColumnDefinition Width="Auto" MinWidth="150" />
         </Grid.ColumnDefinitions>
+
+        <StackPanel Name="Dialog" Background="#eee" Grid.ColumnSpan="3" Grid.RowSpan="2" Visibility="Visible" Panel.ZIndex="1">
+            <TextBlock VerticalAlignment="Bottom" Margin="10,50,10,10">You win!</TextBlock>
+            <Button Click="button_Refresh_Click" HorizontalAlignment="Center">Play again!</Button>
+        </StackPanel>
 
         <Button x:Name="button_Solve" Grid.Row="1" Grid.Column="0" Content="Solve" Click="button_Solve_Click" IsEnabled="True" Visibility="Visible"/>
         <Button x:Name="button_Cancel" Grid.Row="1" Grid.Column="0" Content="Cancel" Click="button_Cancel_Click" IsEnabled="False" Visibility="Hidden"/>
