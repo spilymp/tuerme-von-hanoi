@@ -20,54 +20,72 @@ namespace TuermeVonHanoi
 
     public partial class GameUI : Window
     {
+        /* GameLogic */
         private Game game;
+        /* clicked canvas */
         private Canvas _tempCanvas = null;
 
+        /* dics, default 3 */
         public int Dics { get; set; } = 3;
 
-        /**
-        * Konstruktur
-        */
+        /// <summary>
+        /// Game constructor
+        /// </summary>
         public GameUI()
         {
             InitializeComponent();
-            this.Dics = 3;
+            // init GameLogic
             this.game = new Game(this.LeftCanvas, this.MidCanvas, this.RightCanvas);
+
+            // EventHandle for success
+            this.game.Success += this._toggleWinDialog;
         }
 
-        /**
+        /*
         * UI Element Funktionen
         */
         private void button_Start_Click(object sender, RoutedEventArgs e)
         {
-            this.game.Dics = Dics;
-            this.game.start();
+            // set Dics (binding)
+            game.Dics = Dics;
+            game.start();
 
-            this.LeftCanvas.IsEnabled = true;
-            this.MidCanvas.IsEnabled = true;
-            this.RightCanvas.IsEnabled = true;
+            // enable clickable canvas
+            LeftCanvas.IsEnabled = true;
+            MidCanvas.IsEnabled = true;
+            RightCanvas.IsEnabled = true;
 
+            // toggle buttons
             _toggleButton(ButtonPlay);
             _toggleButton(ButtonSolve);
             _toggleButton(ButtonRefresh);
             _toggleButton(ButtonExit);
 
+            // hidden dics settings
             this.DiscsWrapper.Visibility = Visibility.Hidden;
         }
 
         private void button_Solve_Click(object sender, RoutedEventArgs e)
         {
-            game.solve();
-
+            // toggle buttons, only cancel button show
             _toggleButton(ButtonSolve);
             _toggleButton(ButtonCancel);
             _toggleButton(ButtonRefresh);
-            _toggleButton(ButtonExit);        
+            _toggleButton(ButtonExit);
+
+            // TODO parallelisieren
+            game.solve();
+
+            // toggle buttons
+            _toggleButton(ButtonSolve);
+            _toggleButton(ButtonCancel);
+            _toggleButton(ButtonRefresh);
+            _toggleButton(ButtonExit);
         }
 
         private void button_Cancel_Click(object sender, RoutedEventArgs e)
         {
-
+            // toggle buttons
             _toggleButton(ButtonSolve);
             _toggleButton(ButtonCancel);
             _toggleButton(ButtonRefresh);
@@ -78,46 +96,72 @@ namespace TuermeVonHanoi
         {
             game.exit();
 
-            this.LeftCanvas.IsEnabled = false;
-            this.MidCanvas.IsEnabled = false;
-            this.RightCanvas.IsEnabled = false;
+            // canvas not clickable
+            LeftCanvas.IsEnabled = false;
+            MidCanvas.IsEnabled = false;
+            RightCanvas.IsEnabled = false;
 
+            // toggle buttons, only play button show
             _toggleButton(ButtonPlay);
             _toggleButton(ButtonSolve);
             _toggleButton(ButtonRefresh);
             _toggleButton(ButtonExit);
 
-            this.DiscsWrapper.Visibility = Visibility.Visible;
+            // show dics settings, hidden winDialog(if open)
+            DiscsWrapper.Visibility = Visibility.Visible;
+            WinDialog.Visibility = Visibility.Hidden;
         }
 
         private void button_Refresh_Click(object sender, RoutedEventArgs e)
         {
             game.refresh();
         }
-        private void Canvas_Click(Object sender, MouseButtonEventArgs e)
+
+        /// <summary>
+        /// handle click on canvas element
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void canvas_Click(Object sender, MouseButtonEventArgs e)
         {
+            // object to canvas
             Canvas canvas = (Canvas)sender;
+
+            // if first click on a canvas element
             if (_tempCanvas == null)
             {
+                // get element
                 Rectangle rect = canvas.Children.OfType<Rectangle>().LastOrDefault();
                 if (rect == null) return;
+
+                // active element
                 rect.Fill = new SolidColorBrush(System.Windows.Media.Colors.CadetBlue);
+
+                // set first click canvas
                 _tempCanvas = canvas;
             }
+            // if second click on a canvas element
             else
             {
-                game.move(_tempCanvas, canvas);
+                // move from first to second clicked canvas
+                game.move(_tempCanvas, canvas);               
                 _tempCanvas = null;
             }
         }
 
+        /// <summary>
+        /// helper function
+        /// </summary>
+        /// <param name="button"></param>
         private void _toggleButton(Button button)
         {
+            // hide
             if (button.IsVisible)
             {
                 button.Visibility = Visibility.Hidden;
                 button.IsEnabled = false;
             }
+            // show
             else
             {
                 button.Visibility = Visibility.Visible;
@@ -125,6 +169,14 @@ namespace TuermeVonHanoi
             }
         }
 
-
+        /// <summary>
+        /// handle win event from Game
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void _toggleWinDialog(object sender, EventArgs args)
+        {
+            WinDialog.Visibility = Visibility.Visible;
+        }
     }
 }

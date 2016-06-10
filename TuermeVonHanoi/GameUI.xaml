@@ -36,7 +36,7 @@
 
         <StackPanel Name="WinDialog" Background="#eee" Grid.ColumnSpan="3" Grid.RowSpan="2" Visibility="Hidden" Panel.ZIndex="1">
             <TextBlock VerticalAlignment="Bottom" Margin="10,50,10,10">You win!</TextBlock>
-            <Button Click="button_Refresh_Click" HorizontalAlignment="Center">Play again!</Button>
+            <Button Click="button_Exit_Click" HorizontalAlignment="Center">Play again!</Button>
         </StackPanel>
 
         <Button Name="ButtonPlay" Grid.Row="1" Grid.Column="0" Content="Play" Click="button_Start_Click" IsEnabled="True" Visibility="Visible" Margin="10,0,10,0"/>
@@ -54,13 +54,13 @@
         </StackPanel>
 
         <!-- left canvas -->
-        <Canvas Name="LeftCanvas" Grid.Row="0" IsEnabled="False" AllowDrop="True" MouseLeftButtonUp="Canvas_Click" Background="#FFF0F0F0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" MinWidth="100" MinHeight="300"/>
+        <Canvas Name="LeftCanvas" Grid.Row="0" IsEnabled="False" AllowDrop="True" MouseLeftButtonUp="canvas_Click" Background="#FFF0F0F0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" MinWidth="100" MinHeight="300"/>
 
         <!-- mid canvas -->
-        <Canvas Name="MidCanvas" Grid.Row="0" IsEnabled="False" Grid.Column="1" AllowDrop="True"  MouseLeftButtonUp="Canvas_Click" Background="#FFF0F0F0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" MinWidth="100" MinHeight="300"/>
+        <Canvas Name="MidCanvas" Grid.Row="0" IsEnabled="False" Grid.Column="1" AllowDrop="True"  MouseLeftButtonUp="canvas_Click" Background="#FFF0F0F0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" MinWidth="100" MinHeight="300"/>
 
         <!-- right canvas -->
-        <Canvas Name="RightCanvas" Grid.Row="0" IsEnabled="False" Grid.Column="2" AllowDrop="True"  MouseLeftButtonUp="Canvas_Click"  Background="#FFF0F0F0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" MinWidth="100" MinHeight="300"/>
+        <Canvas Name="RightCanvas" Grid.Row="0" IsEnabled="False" Grid.Column="2" AllowDrop="True"  MouseLeftButtonUp="canvas_Click"  Background="#FFF0F0F0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" MinWidth="100" MinHeight="300"/>
 
     </Grid>
 </Window>

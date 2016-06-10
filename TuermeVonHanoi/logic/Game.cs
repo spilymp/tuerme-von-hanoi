@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,18 +10,24 @@ namespace logic.TuermeVonHanoi
 {
     class Game
     {
+        /* canvas elements */
         private Canvas _canvasLeft;
         private Canvas _canvasMiddle;
         private Canvas _canvasRight;
 
-        private int _dics = 3;
+        /* dics, default 3 */
+        public int Dics { get; set; } = 3;
 
+        /* help var */
         private double _canvasHeight;
         private double _canvasWidth;
         private double _canvasMarginTop;
         private double _canvasMarginLeft;
 
         private double _canvasRelativeMargin = 0.05;
+
+        /* event success */
+        public event EventHandler Success;
 
         public Game(Canvas canvasLeft, Canvas canvasMiddle, Canvas canvasRight)
         {
@@ -32,6 +36,9 @@ namespace logic.TuermeVonHanoi
             this._canvasRight = canvasRight;
         }
 
+        /// <summary>
+        /// game start
+        /// </summary>
         public void start()
         {
             _canvasHeight = _canvasLeft.ActualHeight;
@@ -44,72 +51,125 @@ namespace logic.TuermeVonHanoi
             _buildCanvas();
         }
 
+        /// <summary>
+        /// game exit
+        /// </summary>
         public void exit()
         {
             _clearCanvas();
         }
 
+        /// <summary>
+        /// game refresh
+        /// </summary>
         public void refresh()
         {
             start();
         }
 
+        /// <summary>
+        /// auto solve
+        /// </summary>
         public void solve()
         {
-            refresh();
-            _solve(_canvasLeft, _canvasRight, _canvasMiddle, _dics);
+             _solve(_canvasLeft, _canvasMiddle, _canvasRight, Dics);
         }
 
-        private void _solve(Canvas start, Canvas end, Canvas cache, int height)
-        {
-            if (height > 1) _solve(start, cache, end, height - 1);
-            move(start, end);
-            if (height > 1) _solve(cache, end, start, height - 1);
-        }
-
+        /// <summary>
+        /// move element
+        /// </summary>
+        /// <param name="fromCanvas">from canvas</param>
+        /// <param name="toCanvas">to canvas</param>
         public void move(Canvas fromCanvas, Canvas toCanvas)
         {
+            // get element
             Rectangle rect = _getElement(fromCanvas);
+            // color active element to inactive
             rect.Fill = new SolidColorBrush(Colors.YellowGreen);
 
             if (rect == null || fromCanvas == toCanvas) return;
 
-            Rectangle rectOnTarget = toCanvas.Children.OfType<Rectangle>().LastOrDefault();
+            // get element from target canvas
+            Rectangle rectOnTarget = _getElement(toCanvas);
             Canvas to = (rectOnTarget == null) ? toCanvas : rectOnTarget.Width < rect.Width ? fromCanvas : toCanvas;
 
+            // remove old element
             fromCanvas.Children.Remove(rect);
+            // put element to new canvas
             _putElement(rect, to);
+
+            // update layout for solve
+            fromCanvas.UpdateLayout();
+            toCanvas.UpdateLayout();
+
+            // check if sucess
+            isSuccess();
         }
 
+        /// <summary>
+        /// get last element from canvas
+        /// </summary>
+        /// <param name="canvas"></param>
+        /// <returns></returns>
         private Rectangle _getElement(Canvas canvas)
         {
             Rectangle rect = canvas.Children.OfType<Rectangle>().LastOrDefault();
-            
+
             return rect;
         }
 
+        /// <summary>
+        /// put element to canvas
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="canvas"></param>
         private void _putElement(Rectangle rect, Canvas canvas)
         {
+            // count elements from canvas
             int countElements = (int)canvas.Children.OfType<Rectangle>().LongCount() + 1;
-            Canvas.SetTop(rect, (_dics - countElements) * rect.ActualHeight + _canvasMarginTop);
-            
+            // set position for element
+            Canvas.SetTop(rect, (Dics - countElements) * rect.ActualHeight + _canvasMarginTop);
+
             rect.Fill = new SolidColorBrush(Colors.YellowGreen);
 
+            // add element to canvas
             canvas.Children.Add(rect);
         }
 
+        /// <summary>
+        /// private auto solve function
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="cache"></param>
+        /// <param name="end"></param>
+        /// <param name="dics"></param>
+        private void _solve(Canvas start, Canvas cache, Canvas end, int dics)
+        {
+            if (dics > 0)
+            {
+                _solve(start, end, cache, dics - 1);
+
+                move(start, end);
+                
+                _solve(cache, start, end, dics - 1);
+            }
+        }
+
+        /// <summary>
+        /// build elements
+        /// </summary>
         private void _buildCanvas()
         {
 
             // values for calculation
             int dicsWidthMax = (int)Math.Round(_canvasWidth - _canvasMarginLeft * 2);
             int dicsWidthMin = 5;
-            int dicsHeight = (int)Math.Round(_canvasHeight - _canvasMarginTop * 2) / _dics;
-            
-            int dicsWidthReduce = (dicsWidthMax - dicsWidthMin) / _dics;
+            int dicsHeight = (int)Math.Round(_canvasHeight - _canvasMarginTop * 2) / Dics;
+
+            int dicsWidthReduce = (dicsWidthMax - dicsWidthMin) / Dics;
 
             // create elements
-            for (int i = _dics; i > 0; i--)
+            for (int i = Dics; i > 0; i--)
             {
                 // get width
                 int dicsWidth = dicsWidthMin + (i * dicsWidthReduce);
@@ -133,6 +193,9 @@ namespace logic.TuermeVonHanoi
 
         }
 
+        /// <summary>
+        /// clear elements
+        /// </summary>
         private void _clearCanvas()
         {
             _canvasLeft.Children.Clear();
@@ -140,15 +203,15 @@ namespace logic.TuermeVonHanoi
             _canvasRight.Children.Clear();
         }
 
-        public int Dics
+        /// <summary>
+        /// is success, then fire event
+        /// </summary>
+        public void isSuccess()
         {
-            get { return _dics; }
-            set
+            if(_canvasRight.Children.OfType<Rectangle>().LongCount() == Dics)
             {
-                if (value <= 2)
-                    value = 3;
-
-                _dics = value;
+                EventHandler handler = Success;
+                if (handler != null) handler(this, EventArgs.Empty);
             }
         }
     }
