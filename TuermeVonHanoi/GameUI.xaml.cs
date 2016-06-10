@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,7 +27,7 @@ namespace TuermeVonHanoi
         private Canvas _tempCanvas = null;
 
         /* dics, default 3 */
-        public int Dics { get; set; } = 3;
+        public int Discs { get; set; } = 3;
 
         /// <summary>
         /// Game constructor
@@ -35,7 +36,7 @@ namespace TuermeVonHanoi
         {
             InitializeComponent();
             // init GameLogic
-            this.game = new Game(this.LeftCanvas, this.MidCanvas, this.RightCanvas);
+            this.game = new Game(this.LeftCanvas, this.MidCanvas, this.RightCanvas, this.Dispatcher);
 
             // EventHandle for success
             this.game.Success += this._toggleWinDialog;
@@ -47,7 +48,7 @@ namespace TuermeVonHanoi
         private void button_Start_Click(object sender, RoutedEventArgs e)
         {
             // set Dics (binding)
-            game.Dics = Dics;
+            game.Discs = Discs;
             game.start();
 
             // enable clickable canvas
@@ -73,14 +74,13 @@ namespace TuermeVonHanoi
             _toggleButton(ButtonRefresh);
             _toggleButton(ButtonExit);
 
-            // TODO parallelisieren
             game.solve();
 
             // toggle buttons
-            _toggleButton(ButtonSolve);
-            _toggleButton(ButtonCancel);
-            _toggleButton(ButtonRefresh);
-            _toggleButton(ButtonExit);
+            //_toggleButton(ButtonSolve);
+            //_toggleButton(ButtonCancel);
+            //_toggleButton(ButtonRefresh);
+            //_toggleButton(ButtonExit);
         }
 
         private void button_Cancel_Click(object sender, RoutedEventArgs e)
@@ -90,6 +90,8 @@ namespace TuermeVonHanoi
             _toggleButton(ButtonCancel);
             _toggleButton(ButtonRefresh);
             _toggleButton(ButtonExit);
+
+            game.solveStop();           
         }
 
         private void button_Exit_Click(object sender, RoutedEventArgs e)

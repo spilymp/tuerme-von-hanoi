@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace logic.TuermeVonHanoi
 {
@@ -15,8 +17,8 @@ namespace logic.TuermeVonHanoi
         private Canvas _canvasMiddle;
         private Canvas _canvasRight;
 
-        /* dics, default 3 */
-        public int Dics { get; set; } = 3;
+        /* Discs, default 3 */
+        public int Discs { get; set; } = 3;
 
         /* help var */
         private double _canvasHeight;
@@ -29,11 +31,25 @@ namespace logic.TuermeVonHanoi
         /* event success */
         public event EventHandler Success;
 
-        public Game(Canvas canvasLeft, Canvas canvasMiddle, Canvas canvasRight)
+        /* for async solve */
+        private Task task;
+        private Dispatcher Dispatcher;
+
+        /* for canceling async */
+        private CancellationTokenSource cts;
+        private CancellationToken ct;
+
+
+        public Game(Canvas canvasLeft, Canvas canvasMiddle, Canvas canvasRight, Dispatcher dispatcher)
         {
             this._canvasLeft = canvasLeft;
             this._canvasMiddle = canvasMiddle;
             this._canvasRight = canvasRight;
+
+            this.Dispatcher = dispatcher;
+
+            this.cts = new CancellationTokenSource();
+            this.ct = cts.Token;
         }
 
         /// <summary>
@@ -71,8 +87,15 @@ namespace logic.TuermeVonHanoi
         /// auto solve
         /// </summary>
         public void solve()
-        {
-             _solve(_canvasLeft, _canvasMiddle, _canvasRight, Dics);
+        {      
+            task = new Task(() =>
+            {
+                _solve(_canvasLeft, _canvasMiddle, _canvasRight, Discs);
+            }, ct);
+
+            // TODO
+            if (task.IsCanceled) task.Dispose();
+            task.Start();
         }
 
         /// <summary>
@@ -128,7 +151,7 @@ namespace logic.TuermeVonHanoi
             // count elements from canvas
             int countElements = (int)canvas.Children.OfType<Rectangle>().LongCount() + 1;
             // set position for element
-            Canvas.SetTop(rect, (Dics - countElements) * rect.ActualHeight + _canvasMarginTop);
+            Canvas.SetTop(rect, (Discs - countElements) * rect.ActualHeight + _canvasMarginTop);
 
             rect.Fill = new SolidColorBrush(Colors.YellowGreen);
 
@@ -142,16 +165,24 @@ namespace logic.TuermeVonHanoi
         /// <param name="start"></param>
         /// <param name="cache"></param>
         /// <param name="end"></param>
-        /// <param name="dics"></param>
-        private void _solve(Canvas start, Canvas cache, Canvas end, int dics)
+        /// <param name="Discs"></param>
+        private void _solve(Canvas start, Canvas cache, Canvas end, int Discs)
         {
-            if (dics > 0)
-            {
-                _solve(start, end, cache, dics - 1);
+            if (ct.IsCancellationRequested) return;
 
-                move(start, end);
-                
-                _solve(cache, start, end, dics - 1);
+            if (Discs > 0)
+            {
+                _solve(start, end, cache, Discs - 1);
+
+                this.Dispatcher.Invoke(new Action(() =>
+                {
+                    move(start, end);
+                })
+                );
+
+                Thread.Sleep(400);
+
+                _solve(cache, start, end, Discs - 1);
             }
         }
 
@@ -162,30 +193,30 @@ namespace logic.TuermeVonHanoi
         {
 
             // values for calculation
-            int dicsWidthMax = (int)Math.Round(_canvasWidth - _canvasMarginLeft * 2);
-            int dicsWidthMin = 5;
-            int dicsHeight = (int)Math.Round(_canvasHeight - _canvasMarginTop * 2) / Dics;
+            int DiscsWidthMax = (int)Math.Round(_canvasWidth - _canvasMarginLeft * 2);
+            int DiscsWidthMin = 5;
+            int DiscsHeight = (int)Math.Round(_canvasHeight - _canvasMarginTop * 2) / Discs;
 
-            int dicsWidthReduce = (dicsWidthMax - dicsWidthMin) / Dics;
+            int DiscsWidthReduce = (DiscsWidthMax - DiscsWidthMin) / Discs;
 
             // create elements
-            for (int i = Dics; i > 0; i--)
+            for (int i = Discs; i > 0; i--)
             {
                 // get width
-                int dicsWidth = dicsWidthMin + (i * dicsWidthReduce);
+                int DiscsWidth = DiscsWidthMin + (i * DiscsWidthReduce);
 
                 // create rectangle
                 Rectangle rectangle = new Rectangle
                 {
-                    Width = dicsWidth,
-                    Height = dicsHeight,
+                    Width = DiscsWidth,
+                    Height = DiscsHeight,
                     Margin = new Thickness(0),
                     Fill = new SolidColorBrush(Colors.YellowGreen)
                 };
 
                 // set position
-                Canvas.SetTop(rectangle, (i - 1) * dicsHeight + _canvasMarginTop);
-                Canvas.SetLeft(rectangle, (dicsWidthMax - dicsWidth) / 2 + _canvasMarginLeft);
+                Canvas.SetTop(rectangle, (i - 1) * DiscsHeight + _canvasMarginTop);
+                Canvas.SetLeft(rectangle, (DiscsWidthMax - DiscsWidth) / 2 + _canvasMarginLeft);
 
                 // draw rectangle
                 _canvasLeft.Children.Add(rectangle);
@@ -208,11 +239,16 @@ namespace logic.TuermeVonHanoi
         /// </summary>
         public void isSuccess()
         {
-            if(_canvasRight.Children.OfType<Rectangle>().LongCount() == Dics)
+            if (_canvasRight.Children.OfType<Rectangle>().LongCount() == Discs)
             {
                 EventHandler handler = Success;
                 if (handler != null) handler(this, EventArgs.Empty);
             }
+        }
+
+        public void solveStop()
+        {
+            cts.Cancel();
         }
     }
 }
