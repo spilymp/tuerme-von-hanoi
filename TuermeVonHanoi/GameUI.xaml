@@ -50,7 +50,7 @@
             <Slider x:Name="GameDiscsSlider" Value="{Binding Text, ElementName=TextBox, FallbackValue=3, Mode=TwoWay}" Width="142" 
             	Minimum="3" TickPlacement="Both" SmallChange="1" AutoToolTipPlacement="TopLeft" IsSnapToTickEnabled="True" Margin="10,0"/>
             <TextBox x:Name="TextBox" TextWrapping="Wrap" 
-        		Text="{Binding Dics, FallbackValue=3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0"/>
+        		Text="{Binding Discs, FallbackValue=3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="10,0"/>
         </StackPanel>
 
         <!-- left canvas -->

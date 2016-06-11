@@ -73,14 +73,8 @@ namespace TuermeVonHanoi
             _toggleButton(ButtonCancel);
             _toggleButton(ButtonRefresh);
             _toggleButton(ButtonExit);
-
-            game.solve();
-
-            // toggle buttons
-            //_toggleButton(ButtonSolve);
-            //_toggleButton(ButtonCancel);
-            //_toggleButton(ButtonRefresh);
-            //_toggleButton(ButtonExit);
+            
+            game.solve();           
         }
 
         private void button_Cancel_Click(object sender, RoutedEventArgs e)
@@ -104,10 +98,11 @@ namespace TuermeVonHanoi
             RightCanvas.IsEnabled = false;
 
             // toggle buttons, only play button show
-            _toggleButton(ButtonPlay);
-            _toggleButton(ButtonSolve);
-            _toggleButton(ButtonRefresh);
-            _toggleButton(ButtonExit);
+            _showButton(ButtonPlay);
+            _hideButton(ButtonSolve);
+            _hideButton(ButtonRefresh);
+            _hideButton(ButtonExit);
+            _hideButton(ButtonCancel);
 
             // show dics settings, hidden winDialog(if open)
             DiscsWrapper.Visibility = Visibility.Visible;
@@ -160,15 +155,25 @@ namespace TuermeVonHanoi
             // hide
             if (button.IsVisible)
             {
-                button.Visibility = Visibility.Hidden;
-                button.IsEnabled = false;
+                _hideButton(button);
             }
             // show
             else
             {
-                button.Visibility = Visibility.Visible;
-                button.IsEnabled = true;
+                _showButton(button);
             }
+        }
+
+        private void _showButton(Button button)
+        {
+            button.Visibility = Visibility.Visible;
+            button.IsEnabled = true;
+        }
+
+        private void _hideButton(Button button)
+        {
+            button.Visibility = Visibility.Hidden;
+            button.IsEnabled = false;
         }
 
         /// <summary>

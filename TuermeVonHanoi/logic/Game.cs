@@ -32,7 +32,7 @@ namespace logic.TuermeVonHanoi
         public event EventHandler Success;
 
         /* for async solve */
-        private Task task;
+        private Task solveTask;
         private Dispatcher Dispatcher;
 
         /* for canceling async */
@@ -47,9 +47,6 @@ namespace logic.TuermeVonHanoi
             this._canvasRight = canvasRight;
 
             this.Dispatcher = dispatcher;
-
-            this.cts = new CancellationTokenSource();
-            this.ct = cts.Token;
         }
 
         /// <summary>
@@ -65,6 +62,15 @@ namespace logic.TuermeVonHanoi
 
             _clearCanvas();
             _buildCanvas();
+
+            cts = new CancellationTokenSource();
+            ct = cts.Token;
+
+            solveTask = new Task(() =>
+            {
+                _solve(_canvasLeft, _canvasMiddle, _canvasRight, Discs);
+            }, ct);
+
         }
 
         /// <summary>
@@ -87,15 +93,11 @@ namespace logic.TuermeVonHanoi
         /// auto solve
         /// </summary>
         public void solve()
-        {      
-            task = new Task(() =>
-            {
-                _solve(_canvasLeft, _canvasMiddle, _canvasRight, Discs);
-            }, ct);
-
-            // TODO
-            if (task.IsCanceled) task.Dispose();
-            task.Start();
+        {
+            refresh();
+       
+            if (solveTask.IsCanceled) solveTask.Dispose();
+            solveTask.Start();
         }
 
         /// <summary>
@@ -105,12 +107,20 @@ namespace logic.TuermeVonHanoi
         /// <param name="toCanvas">to canvas</param>
         public void move(Canvas fromCanvas, Canvas toCanvas)
         {
+            // update layout for solve
+            _canvasLeft.UpdateLayout();
+            _canvasMiddle.UpdateLayout();
+            _canvasRight.UpdateLayout();
+
             // get element
             Rectangle rect = _getElement(fromCanvas);
+
+            if (rect == null) return;
+
             // color active element to inactive
             rect.Fill = new SolidColorBrush(Colors.YellowGreen);
 
-            if (rect == null || fromCanvas == toCanvas) return;
+            if (fromCanvas == toCanvas) return;
 
             // get element from target canvas
             Rectangle rectOnTarget = _getElement(toCanvas);
@@ -148,6 +158,7 @@ namespace logic.TuermeVonHanoi
         /// <param name="canvas"></param>
         private void _putElement(Rectangle rect, Canvas canvas)
         {
+
             // count elements from canvas
             int countElements = (int)canvas.Children.OfType<Rectangle>().LongCount() + 1;
             // set position for element
@@ -241,6 +252,7 @@ namespace logic.TuermeVonHanoi
         {
             if (_canvasRight.Children.OfType<Rectangle>().LongCount() == Discs)
             {
+                Thread.Sleep(400);
                 EventHandler handler = Success;
                 if (handler != null) handler(this, EventArgs.Empty);
             }
@@ -248,7 +260,7 @@ namespace logic.TuermeVonHanoi
 
         public void solveStop()
         {
-            cts.Cancel();
+            if(cts != null) cts.Cancel();
         }
     }
 }
