@@ -23,6 +23,7 @@ namespace TuermeVonHanoi
     {
         /* GameLogic */
         private Game game;
+
         /* clicked canvas */
         private Canvas _tempCanvas = null;
 
@@ -50,6 +51,8 @@ namespace TuermeVonHanoi
             // set Dics (binding)
             game.Discs = Discs;
             game.start();
+
+            Messages.Text = "Play!";
 
             // enable clickable canvas
             LeftCanvas.IsEnabled = true;
@@ -91,6 +94,8 @@ namespace TuermeVonHanoi
         private void button_Exit_Click(object sender, RoutedEventArgs e)
         {
             game.exit();
+
+            Messages.Text = "";
 
             // canvas not clickable
             LeftCanvas.IsEnabled = false;

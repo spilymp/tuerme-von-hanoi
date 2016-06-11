@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TuermeVonHanoi"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Title="Türme von Hanoi" Height="400" Width="460" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="300" MinHeight="300" HorizontalContentAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        Title="Türme von Hanoi" Height="450" Width="460" HorizontalAlignment="Left" VerticalAlignment="Top" MinWidth="300" MinHeight="300" HorizontalContentAlignment="Center" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
     <Window.Background>
         <SolidColorBrush Color="White" />
     </Window.Background>
@@ -25,6 +25,7 @@
 
     <Grid Name="GameGrid" Visibility="Visible">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" MinHeight="300" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -34,18 +35,22 @@
             <ColumnDefinition Width="Auto" MinWidth="150" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel Name="WinDialog" Background="#eee" Grid.ColumnSpan="3" Grid.RowSpan="2" Visibility="Hidden" Panel.ZIndex="1">
+        <Button Name="ButtonSpeak" Grid.Column="0" Grid.Row="0" Content="Speak" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="10, 5" Padding="10, 5"/>
+        <Label Name="Titel" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="14" Content="Türme von Hanoi" />
+        <TextBlock Name="Messages" Grid.Column="2" Grid.Row="0" Margin="10, 5" Padding="10, 5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Text="{Binding Messages, Mode=OneWayToSource}"/>
+
+        <StackPanel Name="WinDialog" Background="#eee" Grid.ColumnSpan="3" Grid.RowSpan="3" Visibility="Hidden" Panel.ZIndex="1">
             <TextBlock VerticalAlignment="Bottom" Margin="10,50,10,10">You win!</TextBlock>
-            <Button Click="button_Exit_Click" HorizontalAlignment="Center">Play again!</Button>
+            <Button Click="button_Exit_Click" HorizontalAlignment="Center"  Content="Play again!" Padding="10"/> 
         </StackPanel>
 
-        <Button Name="ButtonPlay" Grid.Row="1" Grid.Column="0" Content="Play" Click="button_Start_Click" IsEnabled="True" Visibility="Visible" Margin="10,0,10,0"/>
-        <Button Name="ButtonSolve" Grid.Row="1" Grid.Column="0" Content="Solve" Click="button_Solve_Click" IsEnabled="False" Visibility="Hidden" Margin="10,0,10,0"/>
-        <Button Name="ButtonCancel" Grid.Row="1" Grid.Column="0" Content="Cancel" Click="button_Cancel_Click" IsEnabled="False" Visibility="Hidden" Margin="10,0,10,0"/>
-        <Button Name="ButtonRefresh" Grid.Row="1" Grid.Column="1" Content="Refresh" Click="button_Refresh_Click" IsEnabled="False" Visibility="Hidden" Margin="10,0,10,0"/>
-        <Button Name="ButtonExit" Grid.Row="1" Grid.Column="2" Content="Exit" Click="button_Exit_Click" IsEnabled="False" Visibility="Hidden" Margin="10,0,10,0"/>
+        <Button Name="ButtonPlay" Grid.Row="2" Grid.Column="0" Content="Play" Click="button_Start_Click" IsEnabled="True" Visibility="Visible" Margin="10,0,10,0"/>
+        <Button Name="ButtonSolve" Grid.Row="2" Grid.Column="0" Content="Solve" Click="button_Solve_Click" IsEnabled="False" Visibility="Hidden" Margin="10,0,10,0"/>
+        <Button Name="ButtonCancel" Grid.Row="2" Grid.Column="0" Content="Cancel" Click="button_Cancel_Click" IsEnabled="False" Visibility="Hidden" Margin="10,0,10,0"/>
+        <Button Name="ButtonRefresh" Grid.Row="2" Grid.Column="1" Content="Refresh" Click="button_Refresh_Click" IsEnabled="False" Visibility="Hidden" Margin="10,0,10,0"/>
+        <Button Name="ButtonExit" Grid.Row="2" Grid.Column="2" Content="Exit" Click="button_Exit_Click" IsEnabled="False" Visibility="Hidden" Margin="10,0,10,0"/>
 
-        <StackPanel Name="DiscsWrapper" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="10,0" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+        <StackPanel Name="DiscsWrapper" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="10,0" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
             <Label Margin="0" Content="Dics" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
             <Slider x:Name="GameDiscsSlider" Value="{Binding Text, ElementName=TextBox, FallbackValue=3, Mode=TwoWay}" Width="142" 
             	Minimum="3" TickPlacement="Both" SmallChange="1" AutoToolTipPlacement="TopLeft" IsSnapToTickEnabled="True" Margin="10,0"/>
@@ -54,13 +59,13 @@
         </StackPanel>
 
         <!-- left canvas -->
-        <Canvas Name="LeftCanvas" Grid.Row="0" IsEnabled="False" AllowDrop="True" MouseLeftButtonUp="canvas_Click" Background="#FFF0F0F0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" MinWidth="100" MinHeight="300"/>
+        <Canvas Name="LeftCanvas" Grid.Row="1" IsEnabled="False" AllowDrop="True" MouseLeftButtonUp="canvas_Click" Background="#FFF0F0F0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" MinWidth="100" MinHeight="300"/>
 
         <!-- mid canvas -->
-        <Canvas Name="MidCanvas" Grid.Row="0" IsEnabled="False" Grid.Column="1" AllowDrop="True"  MouseLeftButtonUp="canvas_Click" Background="#FFF0F0F0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" MinWidth="100" MinHeight="300"/>
+        <Canvas Name="MidCanvas" Grid.Row="1" IsEnabled="False" Grid.Column="1" AllowDrop="True"  MouseLeftButtonUp="canvas_Click" Background="#FFF0F0F0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" MinWidth="100" MinHeight="300"/>
 
         <!-- right canvas -->
-        <Canvas Name="RightCanvas" Grid.Row="0" IsEnabled="False" Grid.Column="2" AllowDrop="True"  MouseLeftButtonUp="canvas_Click"  Background="#FFF0F0F0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" MinWidth="100" MinHeight="300"/>
+        <Canvas Name="RightCanvas" Grid.Row="1" IsEnabled="False" Grid.Column="2" AllowDrop="True"  MouseLeftButtonUp="canvas_Click"  Background="#FFF0F0F0" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" MinWidth="100" MinHeight="300"/>
 
     </Grid>
 </Window>
