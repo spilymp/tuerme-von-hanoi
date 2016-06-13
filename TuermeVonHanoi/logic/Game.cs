@@ -95,7 +95,7 @@ namespace logic.TuermeVonHanoi
         public void solve()
         {
             refresh();
-       
+
             if (solveTask.IsCanceled) solveTask.Dispose();
             solveTask.Start();
         }
@@ -260,7 +260,7 @@ namespace logic.TuermeVonHanoi
 
         public void solveStop()
         {
-            if(cts != null) cts.Cancel();
+            if (cts != null) cts.Cancel();
         }
     }
 }
