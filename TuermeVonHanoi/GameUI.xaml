@@ -24,7 +24,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid Name="GameGrid" Visibility="Visible">
+    <Grid Name="GameGrid" Visibility="Visible" MouseRightButtonDown="GameGrid_MouseRightButtonDown" MouseRightButtonUp="GameGrid_MouseRightButtonUp">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" MinHeight="300" />

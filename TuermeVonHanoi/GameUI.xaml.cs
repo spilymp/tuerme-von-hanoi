@@ -21,7 +21,7 @@ namespace TuermeVonHanoi
         /* clicked canvas */
         private Canvas _tempCanvas = null;
 
-        /* dics, default 3 */
+        /* discs, default 3 */
         public int Discs { get; set; } = 3;
 
         /// <summary>
@@ -236,6 +236,16 @@ namespace TuermeVonHanoi
             Canvas toCanvas = (Int32.Parse(result[1]) == 1) ? LeftCanvas : (Int32.Parse(result[1]) == 2) ? MidCanvas : RightCanvas;
 
             game.move(fromCanvas, toCanvas);
+        }
+
+        private void GameGrid_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            game.startGestureRecognition(Messages, this);
+        }
+
+        private void GameGrid_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            game.stopGestureRecognition();
         }
     }
 }

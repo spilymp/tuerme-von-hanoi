@@ -4,9 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Collections.Generic;
+using TuermeVonHanoi.logic;
+using TuermeVonHanoi;
 
 namespace logic.TuermeVonHanoi
 {
@@ -39,6 +43,20 @@ namespace logic.TuermeVonHanoi
         private CancellationTokenSource cts;
         private CancellationToken ct;
 
+        /* Thread for gestures */
+        Thread gestureThread = null;
+        bool stop = false;
+        int count = 0;
+        List<double> gesture;
+        Worker workerObject;
+
+
+        /* Timer */
+        private static System.Timers.Timer loopTimer;
+
+        //Point start = new Point(-10000, -10000);
+        Point last = new Point(-10000, -10000);
+        Point current;
 
         public Game(Canvas canvasLeft, Canvas canvasMiddle, Canvas canvasRight, Dispatcher dispatcher)
         {
@@ -47,6 +65,13 @@ namespace logic.TuermeVonHanoi
             this._canvasRight = canvasRight;
 
             this.Dispatcher = dispatcher;
+
+            loopTimer = new System.Timers.Timer();
+            //interval in milliseconds
+            loopTimer.Interval = 100;
+            loopTimer.Enabled = false;
+            //loopTimer.Elapsed += loopTimerEvent;
+            loopTimer.AutoReset = true;
         }
 
         /// <summary>
@@ -261,6 +286,23 @@ namespace logic.TuermeVonHanoi
         public void solveStop()
         {
             if (cts != null) cts.Cancel();
+        }
+
+        public void startGestureRecognition(TextBlock label, GameUI gameUI)
+        {
+            workerObject = new Worker();
+            gestureThread = new Thread(workerObject.DoWork);
+            gestureThread.Start();
+        }
+
+        public void stopGestureRecognition()
+        {
+            workerObject.RequestStop();
+            gestureThread.Join();
+            List<double> gesture = workerObject.getGesture();
+            Gesture.writeGestureToConsole(gesture);
+            Gesture spotter = new Gesture();
+            Console.WriteLine(spotter.identifyGesture(gesture.ToArray()));
         }
     }
 }
