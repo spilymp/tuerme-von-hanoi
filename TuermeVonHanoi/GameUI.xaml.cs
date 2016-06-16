@@ -240,12 +240,13 @@ namespace TuermeVonHanoi
 
         private void GameGrid_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            game.startGestureRecognition(Messages, this);
+            game.startGestureRecognition();
         }
 
         private void GameGrid_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
-            game.stopGestureRecognition();
+            string message = game.stopGestureRecognition();
+            Messages.Text = message;
         }
     }
 }

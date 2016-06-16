@@ -50,14 +50,6 @@ namespace logic.TuermeVonHanoi
         List<double> gesture;
         Worker workerObject;
 
-
-        /* Timer */
-        private static System.Timers.Timer loopTimer;
-
-        //Point start = new Point(-10000, -10000);
-        Point last = new Point(-10000, -10000);
-        Point current;
-
         public Game(Canvas canvasLeft, Canvas canvasMiddle, Canvas canvasRight, Dispatcher dispatcher)
         {
             this._canvasLeft = canvasLeft;
@@ -65,13 +57,6 @@ namespace logic.TuermeVonHanoi
             this._canvasRight = canvasRight;
 
             this.Dispatcher = dispatcher;
-
-            loopTimer = new System.Timers.Timer();
-            //interval in milliseconds
-            loopTimer.Interval = 100;
-            loopTimer.Enabled = false;
-            //loopTimer.Elapsed += loopTimerEvent;
-            loopTimer.AutoReset = true;
         }
 
         /// <summary>
@@ -288,21 +273,90 @@ namespace logic.TuermeVonHanoi
             if (cts != null) cts.Cancel();
         }
 
-        public void startGestureRecognition(TextBlock label, GameUI gameUI)
+        public void startGestureRecognition()
         {
             workerObject = new Worker();
             gestureThread = new Thread(workerObject.DoWork);
             gestureThread.Start();
         }
 
-        public void stopGestureRecognition()
+        public string stopGestureRecognition()
         {
-            workerObject.RequestStop();
+            try
+            {
+                workerObject.RequestStop();
+            }
+            catch (System.NullReferenceException e)
+            {
+                Thread.Sleep(200);
+                workerObject.RequestStop();
+            }
             gestureThread.Join();
             List<double> gesture = workerObject.getGesture();
             Gesture.writeGestureToConsole(gesture);
             Gesture spotter = new Gesture();
-            Console.WriteLine(spotter.identifyGesture(gesture.ToArray()));
+            Gestures gestures = spotter.identifyGesture(gesture.ToArray());
+            Console.WriteLine(gestures);
+
+            string message = "";
+
+            switch (gestures) {
+                case Gestures.ONE2TWO:
+                    {
+                        message = "Move from 1 to 2";
+                        move(_canvasLeft, _canvasMiddle);
+                        break;
+                    }
+                case Gestures.ONE2THREE:
+                    {
+                        message = "Move from 1 to 3";
+                        move(_canvasLeft, _canvasRight);
+                        break;
+                    }
+                case Gestures.TWO2ONE:
+                    {
+                        message = "Move from 2 to 1";
+                        move(_canvasMiddle, _canvasLeft);
+                        break;
+                    }
+                case Gestures.TWO2THREE:
+                    {
+                        message = "Move from 2 to 3";
+                        move(_canvasMiddle, _canvasRight);
+                        break;
+                    }
+                case Gestures.THREE2ONE:
+                    {
+                        message = "Move from 3 to 1";
+                        move(_canvasRight, _canvasLeft);
+                        break;
+                    }
+                case Gestures.THREE2TWO:
+                    {
+                        message = "Move from 3 to 2";
+                        move(_canvasRight, _canvasMiddle);
+                        break;
+                    }
+                case Gestures.SOLVE:
+                    {
+                        message = "Reset and solve current game.";
+                        solve();
+                        break;
+                    }
+                case Gestures.REFRESH:
+                    {
+                        message = "Refresh current game.";
+                        refresh();
+                        break;
+                    }
+                default:
+                    {
+                        message = "No Gesture identified.";
+                        break;
+                    }
+            }
+
+            return message;
         }
     }
 }
