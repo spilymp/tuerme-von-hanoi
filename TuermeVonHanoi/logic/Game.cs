@@ -288,8 +288,15 @@ namespace logic.TuermeVonHanoi
             }
             catch (System.NullReferenceException e)
             {
-                Thread.Sleep(200);
-                workerObject.RequestStop();
+                Thread.Sleep(500);
+                if (workerObject != null)
+                {
+                    workerObject.RequestStop();
+                } else
+                {
+                    startGestureRecognition();
+                    stopGestureRecognition();
+                }
             }
             gestureThread.Join();
             List<double> gesture = workerObject.getGesture();
@@ -300,7 +307,8 @@ namespace logic.TuermeVonHanoi
 
             string message = "";
 
-            switch (gestures) {
+            switch (gestures)
+            {
                 case Gestures.ONE2TWO:
                     {
                         message = "Move from 1 to 2";
@@ -347,6 +355,31 @@ namespace logic.TuermeVonHanoi
                     {
                         message = "Refresh current game.";
                         refresh();
+                        break;
+                    }
+                case Gestures.ONE:
+                    {
+                        message = "ONE";
+                        break;
+                    }
+                case Gestures.TWO:
+                    {
+                        message = "TWO";
+                        break;
+                    }
+                case Gestures.THREE:
+                    {
+                        message = "THREE";
+                        break;
+                    }
+                case Gestures.CLOSE_1:
+                    {
+                        message = "CLOSE Gesture 1";
+                        break;
+                    }
+                case Gestures.CLOSE_2:
+                    {
+                        message = "CLOSE Gesture 2";
                         break;
                     }
                 default:
