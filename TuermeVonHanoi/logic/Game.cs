@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using System.Collections.Generic;
 using TuermeVonHanoi.logic;
 using TuermeVonHanoi;
+using System.Speech.Recognition;
 
 namespace logic.TuermeVonHanoi
 {
@@ -34,6 +35,7 @@ namespace logic.TuermeVonHanoi
 
         /* event success */
         public event EventHandler Success;
+        public event EventHandler Exit;
 
         /* for async solve */
         private Task solveTask;
@@ -50,6 +52,14 @@ namespace logic.TuermeVonHanoi
         List<double> gesture;
         Worker workerObject;
 
+        /* SpeakMode */
+        private GameSpeakMode speakMode;
+
+        /* Slot */
+        KeyWords slot1 = KeyWords.NO;
+        KeyWords slot2 = KeyWords.NO;
+        KeyWords slot3 = KeyWords.NO;
+
         public Game(Canvas canvasLeft, Canvas canvasMiddle, Canvas canvasRight, Dispatcher dispatcher)
         {
             this._canvasLeft = canvasLeft;
@@ -57,6 +67,9 @@ namespace logic.TuermeVonHanoi
             this._canvasRight = canvasRight;
 
             this.Dispatcher = dispatcher;
+
+            this.speakMode = new GameSpeakMode();
+            this.speakMode.ValueChanged += this.speakHandle;
         }
 
         /// <summary>
@@ -73,6 +86,8 @@ namespace logic.TuermeVonHanoi
             _clearCanvas();
             _buildCanvas();
 
+            speakMode.start();
+
             cts = new CancellationTokenSource();
             ct = cts.Token;
 
@@ -88,6 +103,8 @@ namespace logic.TuermeVonHanoi
         /// </summary>
         public void exit()
         {
+            speakMode.stop();
+
             _clearCanvas();
         }
 
@@ -268,6 +285,12 @@ namespace logic.TuermeVonHanoi
             }
         }
 
+        public void isExit()
+        {
+            EventHandler handler = Exit;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
         public void solveStop()
         {
             if (cts != null) cts.Cancel();
@@ -292,7 +315,8 @@ namespace logic.TuermeVonHanoi
                 if (workerObject != null)
                 {
                     workerObject.RequestStop();
-                } else
+                }
+                else
                 {
                     startGestureRecognition();
                     stopGestureRecognition();
@@ -307,7 +331,8 @@ namespace logic.TuermeVonHanoi
 
             string message = "";
 
-            switch (gestures) {
+            switch (gestures)
+            {
                 case Gestures.ONE2TWO:
                     {
                         message = "Move from 1 to 2";
@@ -358,26 +383,37 @@ namespace logic.TuermeVonHanoi
                     }
                 case Gestures.ONE:
                     {
+                        if (slot1 == KeyWords.NO) setSlot1(KeyWords.PUT);
+                        if (slot1 == KeyWords.PUT && slot2 == KeyWords.NO) setSlot2(KeyWords.CANVAS_LEFT);
+                        else if (slot1 == KeyWords.PUT && slot3 == KeyWords.NO) setSlot3(KeyWords.CANVAS_LEFT);
                         message = "ONE";
                         break;
                     }
                 case Gestures.TWO:
                     {
+                        if (slot1 == KeyWords.NO) setSlot1(KeyWords.PUT);
+                        if (slot1 == KeyWords.PUT && slot2 == KeyWords.NO) setSlot2(KeyWords.CANVAS_MIDDLE);
+                        else if (slot1 == KeyWords.PUT && slot3 == KeyWords.NO) setSlot3(KeyWords.CANVAS_MIDDLE);
                         message = "TWO";
                         break;
                     }
                 case Gestures.THREE:
                     {
+                        if (slot1 == KeyWords.NO) setSlot1(KeyWords.PUT);
+                        if (slot1 == KeyWords.PUT && slot2 == KeyWords.NO) setSlot2(KeyWords.CANVAS_RIGHT);
+                        else if (slot1 == KeyWords.PUT && slot3 == KeyWords.NO) setSlot3(KeyWords.CANVAS_RIGHT);
                         message = "THREE";
                         break;
                     }
                 case Gestures.CLOSE_1:
                     {
+                        if (slot1 == KeyWords.NO) setSlot1(KeyWords.CLOSE);
                         message = "CLOSE Gesture 1";
                         break;
                     }
                 case Gestures.CLOSE_2:
                     {
+                        if (slot1 == KeyWords.CLOSE) setSlot2(KeyWords.CLOSE);
                         message = "CLOSE Gesture 2";
                         break;
                     }
@@ -388,7 +424,177 @@ namespace logic.TuermeVonHanoi
                     }
             }
 
+
             return message;
         }
+
+        public void clickHandle(Canvas element)
+        {
+            KeyWords key;
+
+            if (element == _canvasLeft) key = KeyWords.CANVAS_LEFT;
+            else if (element == _canvasMiddle) key = KeyWords.CANVAS_MIDDLE;
+            else key = KeyWords.CANVAS_RIGHT;
+
+            if (slot1 == KeyWords.NO) setSlot1(KeyWords.PUT);
+            if (slot1 == KeyWords.PUT && slot2 == KeyWords.NO) setSlot2(key);
+            else if (slot1 == KeyWords.PUT && slot3 == KeyWords.NO) setSlot3(key);           
+        }
+
+        /// <summary>
+        /// speak handle
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void speakHandle(object sender, EventArgs e)
+        {
+            SpeechRecognizedEventArgs ev = (SpeechRecognizedEventArgs)e;
+            String[] resultArray = ev.Result.Semantics.Value.ToString().Split(';');
+            int result = Int32.Parse(resultArray[0]);          
+
+            //if slot1
+            if(slot1 == KeyWords.NO)
+            {
+                KeyWords key = (result == 1) ? KeyWords.PUT : KeyWords.CLOSE;
+                setSlot1(key);
+            }
+
+            //if slot2
+            else if (slot1 != KeyWords.NO && slot2 == KeyWords.NO)
+            {
+                setSlot2(_getKeyWordFromNumber(result));
+            } 
+
+            //if slot3
+            else if (slot1 != KeyWords.NO && slot2 != KeyWords.NO && slot3 == KeyWords.NO)
+            {
+                setSlot3(_getKeyWordFromNumber(result));
+            }
+        }
+
+
+        enum KeyWords
+        {
+            NO,
+            PUT,
+            CLOSE,
+            CANVAS_LEFT,
+            CANVAS_MIDDLE,
+            CANVAS_RIGHT
+        }
+
+        private void _resetSlots()
+        {
+            slot1 = KeyWords.NO;
+            slot2 = KeyWords.NO;
+            slot3 = KeyWords.NO;
+
+            speakMode.loadSlot1();
+        }
+
+        private bool setSlot1(KeyWords keyWord)
+        {
+            Console.WriteLine("Setze Slot 1 mit " + keyWord);
+            slot1 = keyWord;
+            speakMode.loadSlot2();
+
+            return false;
+        }
+
+        private bool setSlot2(KeyWords keyWord)
+        {
+            Console.WriteLine("Setze Slot 2 mit " + keyWord);
+
+            if (slot1 == KeyWords.PUT)
+            {
+                slot2 = keyWord;
+
+                _getCanvasFromKeyWord(keyWord).Children.OfType<Rectangle>().LastOrDefault().Fill = new SolidColorBrush(System.Windows.Media.Colors.CadetBlue);
+                speakMode.loadSlot3();
+
+                return true;
+            } 
+            else if(slot1 == KeyWords.CLOSE && keyWord == KeyWords.CLOSE){
+                _resetSlots();
+                isExit();
+
+                return true;
+            }
+            else
+            {
+                _resetSlots();
+            }
+
+            return false;
+        }
+
+        private bool setSlot3(KeyWords keyWord)
+        {
+            Console.WriteLine("Setze Slot 3 mit " + keyWord);
+
+            if (slot1 == KeyWords.PUT && slot2 != KeyWords.NO)
+            {
+                Canvas fromCanvas, toCanvas;
+
+                slot3 = keyWord;
+
+                fromCanvas = _getCanvasFromKeyWord(slot2);
+                toCanvas = _getCanvasFromKeyWord(slot3);
+
+                if (fromCanvas != null && toCanvas != null)
+                {
+                    move(fromCanvas, toCanvas);
+                    _resetSlots();
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private Canvas _getCanvasFromKeyWord(KeyWords keyWord)
+        {
+            switch (keyWord)
+            {
+                case KeyWords.CANVAS_LEFT:
+                    {
+                        return _canvasLeft;
+                    }
+                case KeyWords.CANVAS_MIDDLE:
+                    {
+                        return _canvasMiddle;
+                    }
+                case KeyWords.CANVAS_RIGHT:
+                    {
+                        return _canvasRight;
+                    }
+                default:
+                    {
+                        return null;
+                    }
+            }
+        }
+
+        private KeyWords _getKeyWordFromNumber(int num)
+        {
+            KeyWords el = KeyWords.NO;
+
+            if (num == 1) el = KeyWords.CANVAS_LEFT;
+            else if (num == 2) el = KeyWords.CANVAS_MIDDLE;
+            else if (num == 3) el = KeyWords.CANVAS_RIGHT;
+            else if (num == 4 && slot1 == KeyWords.PUT)
+            {
+                if (_canvasLeft.IsMouseOver) el = KeyWords.CANVAS_LEFT;
+                else if (_canvasMiddle.IsMouseOver) el = KeyWords.CANVAS_MIDDLE;
+                else if (_canvasRight.IsMouseOver) el = KeyWords.CANVAS_RIGHT;
+            }
+            else if(num == 4 && slot1 == KeyWords.CLOSE)
+            {
+                el = KeyWords.CLOSE;
+            }
+
+            return el;
+        }
+
     }
 }

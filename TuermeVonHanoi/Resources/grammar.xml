@@ -5,7 +5,89 @@
          xml:lang="de-DE"
          version="1.0"
          tag-format="semantics/1.0">
-  <rule id="MoveIt" scope="public">
+
+  <!-- slot1 -->
+  <rule id="Slot1" scope="public">
+
+    <one-of>
+      <item>
+        <tag>out="1";</tag>
+        put
+      </item>
+      <item>
+        <tag>out="1";</tag>
+        bewege
+      </item>
+      <item>
+        <tag>out="2";</tag>
+        close
+      </item>
+      <item>
+        <tag>out="2";</tag>
+        schließe
+      </item>
+    </one-of>
+
+  </rule>
+
+  <!-- slot2 -->
+  <rule id="Slot2" scope="public">
+
+    <one-of>
+      <item>
+        <tag>out="4";</tag>
+        that
+      </item>
+      <item>
+        <tag>out="4";</tag>
+        dies
+      </item>
+      <item>
+        <tag>out="1";</tag>
+        1
+      </item>
+      <item>
+        <tag>out="2";</tag>
+        2
+      </item>
+      <item>
+        <tag>out="3";</tag>
+        3
+      </item>
+    </one-of>
+
+  </rule>
+
+  <!-- slot3 -->
+  <rule id="Slot3" scope="public">
+
+    <one-of>
+      <item>
+        <tag>out="4";</tag>
+        there
+      </item>
+      <item>
+        <tag>out="4";</tag>
+        dahin
+      </item>
+      <item>
+        <tag>out="1";</tag>
+        1
+      </item>
+      <item>
+        <tag>out="2";</tag>
+        2
+      </item>
+      <item>
+        <tag>out="3";</tag>
+        3
+      </item>
+    </one-of>
+
+  </rule>
+
+  <!-- old -->
+  <rule id="All" scope="public">
 
     <one-of>
       <item> verschiebe </item>

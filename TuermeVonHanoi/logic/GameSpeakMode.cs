@@ -12,7 +12,9 @@ namespace TuermeVonHanoi.logic
 
         private SpeechRecognitionEngine recognizer;
 
-        static private Grammar grammar = new Grammar(@"Resources\grammar.xml", "MoveIt");
+        static private Grammar grammar1 = new Grammar(@"Resources\grammar.xml", "Slot1");
+        static private Grammar grammar2 = new Grammar(@"Resources\grammar.xml", "Slot2");
+        static private Grammar grammar3 = new Grammar(@"Resources\grammar.xml", "Slot3");
 
         public event EventHandler ValueChanged;
 
@@ -27,7 +29,7 @@ namespace TuermeVonHanoi.logic
             this.recognizer.SetInputToDefaultAudioDevice();
 
             recognizer.UnloadAllGrammars();
-            recognizer.LoadGrammar(grammar);
+            recognizer.LoadGrammar(grammar1);
 
             recognizer.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(recognizer_SpeechRecognized);
 
@@ -38,6 +40,27 @@ namespace TuermeVonHanoi.logic
         {
             recognizer.UnloadAllGrammars();
             recognizer.RecognizeAsyncCancel();
+        }
+
+        public void loadSlot1()
+        {
+            recognizer.UnloadAllGrammars();
+            recognizer.LoadGrammar(grammar1);
+            recognizer.RequestRecognizerUpdate();
+        }
+
+        public void loadSlot2()
+        {
+            recognizer.UnloadAllGrammars();
+            recognizer.LoadGrammar(grammar2);
+            recognizer.RequestRecognizerUpdate();
+        }
+
+        public void loadSlot3()
+        {
+            recognizer.UnloadAllGrammars();
+            recognizer.LoadGrammar(grammar3);
+            recognizer.RequestRecognizerUpdate();
         }
 
         private void recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)

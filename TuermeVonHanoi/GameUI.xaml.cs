@@ -16,10 +16,6 @@ namespace TuermeVonHanoi
     {
         /* GameLogic */
         private Game game;
-        private GameSpeakMode speakMode;
-
-        /* clicked canvas */
-        private Canvas _tempCanvas = null;
 
         /* discs, default 3 */
         public int Discs { get; set; } = 3;
@@ -32,11 +28,10 @@ namespace TuermeVonHanoi
             InitializeComponent();
             // init GameLogic
             this.game = new Game(this.LeftCanvas, this.MidCanvas, this.RightCanvas, this.Dispatcher);
-            this.speakMode = new GameSpeakMode();
 
             // EventHandle for success
             this.game.Success += this._toggleWinDialog;
-            this.speakMode.ValueChanged += this.speakHandle;
+            this.game.Exit += this.button_Exit_Click;
         }
 
         /// <summary>
@@ -68,7 +63,6 @@ namespace TuermeVonHanoi
             _toggleButton(ButtonSolve);
             _toggleButton(ButtonRefresh);
             _toggleButton(ButtonExit);
-            _toggleButton(ButtonSpeak);
 
             // hidden dics settings
             this.DiscsWrapper.Visibility = Visibility.Hidden;
@@ -81,7 +75,6 @@ namespace TuermeVonHanoi
             _toggleButton(ButtonCancel);
             _toggleButton(ButtonRefresh);
             _toggleButton(ButtonExit);
-            _toggleButton(ButtonSpeak);
 
             game.solve();
         }
@@ -93,12 +86,11 @@ namespace TuermeVonHanoi
             _toggleButton(ButtonCancel);
             _toggleButton(ButtonRefresh);
             _toggleButton(ButtonExit);
-            _toggleButton(ButtonSpeak);
 
             game.solveStop();
         }
 
-        private void button_Exit_Click(object sender, RoutedEventArgs e)
+        private void button_Exit_Click(object sender, EventArgs e)
         {
             game.exit();
 
@@ -115,8 +107,6 @@ namespace TuermeVonHanoi
             _hideButton(ButtonRefresh);
             _hideButton(ButtonExit);
             _hideButton(ButtonCancel);
-            _hideButton(ButtonSpeak);
-            _hideButton(ButtonSpeakCancel);
 
             // show dics settings, hidden winDialog(if open)
             DiscsWrapper.Visibility = Visibility.Visible;
@@ -128,27 +118,6 @@ namespace TuermeVonHanoi
             game.refresh();
         }
 
-        private void button_Speak_Click(object sender, EventArgs e)
-        {
-            _hideButton(ButtonSpeak);
-            _showButton(ButtonSpeakCancel);
-
-            speakMode.start();
-
-            Messages.Text = "Speak!";
-        }
-
-        private void button_SpeakCancel_Click(object sender, EventArgs e)
-        {
-            _showButton(ButtonSpeak);
-            _hideButton(ButtonSpeakCancel);
-
-            speakMode.stop();
-
-            Messages.Text = "Speak!";
-        }
-
-
         /// <summary>
         /// handle click on canvas element
         /// </summary>
@@ -159,26 +128,7 @@ namespace TuermeVonHanoi
             // object to canvas
             Canvas canvas = (Canvas)sender;
 
-            // if first click on a canvas element
-            if (_tempCanvas == null)
-            {
-                // get element
-                Rectangle rect = canvas.Children.OfType<Rectangle>().LastOrDefault();
-                if (rect == null) return;
-
-                // active element
-                rect.Fill = new SolidColorBrush(System.Windows.Media.Colors.CadetBlue);
-
-                // set first click canvas
-                _tempCanvas = canvas;
-            }
-            // if second click on a canvas element
-            else
-            {
-                // move from first to second clicked canvas
-                game.move(_tempCanvas, canvas);
-                _tempCanvas = null;
-            }
+            game.clickHandle(canvas);
         }
 
         /// <summary>
@@ -219,23 +169,6 @@ namespace TuermeVonHanoi
         private void _toggleWinDialog(object sender, EventArgs args)
         {
             WinDialog.Visibility = Visibility.Visible;
-        }
-
-
-        /// <summary>
-        /// speak handle
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void speakHandle(object sender, EventArgs e)
-        {
-            SpeechRecognizedEventArgs ev = (SpeechRecognizedEventArgs)e;
-            String[] result = ev.Result.Semantics.Value.ToString().Split(';');
-
-            Canvas fromCanvas = (Int32.Parse(result[0]) == 1) ? LeftCanvas : (Int32.Parse(result[0]) == 2) ? MidCanvas : RightCanvas;
-            Canvas toCanvas = (Int32.Parse(result[1]) == 1) ? LeftCanvas : (Int32.Parse(result[1]) == 2) ? MidCanvas : RightCanvas;
-
-            game.move(fromCanvas, toCanvas);
         }
 
         private void GameGrid_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
