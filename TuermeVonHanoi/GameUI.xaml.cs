@@ -16,7 +16,6 @@ namespace TuermeVonHanoi
     {
         /* GameLogic */
         private Game game;
-        private GameSpeakMode speakMode;
 
         /* clicked canvas */
         private Canvas _tempCanvas = null;
@@ -32,11 +31,10 @@ namespace TuermeVonHanoi
             InitializeComponent();
             // init GameLogic
             this.game = new Game(this.LeftCanvas, this.MidCanvas, this.RightCanvas, this.Dispatcher);
-            this.speakMode = new GameSpeakMode();
 
             // EventHandle for success
             this.game.Success += this._toggleWinDialog;
-            this.speakMode.ValueChanged += this.speakHandle;
+            this.game.Exit += this.button_Exit_Click;
         }
 
         /// <summary>
@@ -68,7 +66,7 @@ namespace TuermeVonHanoi
             _toggleButton(ButtonSolve);
             _toggleButton(ButtonRefresh);
             _toggleButton(ButtonExit);
-            _toggleButton(ButtonSpeak);
+            //_toggleButton(ButtonSpeak);
 
             // hidden dics settings
             this.DiscsWrapper.Visibility = Visibility.Hidden;
@@ -81,7 +79,7 @@ namespace TuermeVonHanoi
             _toggleButton(ButtonCancel);
             _toggleButton(ButtonRefresh);
             _toggleButton(ButtonExit);
-            _toggleButton(ButtonSpeak);
+            //_toggleButton(ButtonSpeak);
 
             game.solve();
         }
@@ -93,12 +91,12 @@ namespace TuermeVonHanoi
             _toggleButton(ButtonCancel);
             _toggleButton(ButtonRefresh);
             _toggleButton(ButtonExit);
-            _toggleButton(ButtonSpeak);
-
+            //_toggleButton(ButtonSpeak);
+            
             game.solveStop();
         }
 
-        private void button_Exit_Click(object sender, RoutedEventArgs e)
+        private void button_Exit_Click(object sender, EventArgs arg)
         {
             game.exit();
 
@@ -115,8 +113,8 @@ namespace TuermeVonHanoi
             _hideButton(ButtonRefresh);
             _hideButton(ButtonExit);
             _hideButton(ButtonCancel);
-            _hideButton(ButtonSpeak);
-            _hideButton(ButtonSpeakCancel);
+            //_hideButton(ButtonSpeak);
+            //_hideButton(ButtonSpeakCancel);
 
             // show dics settings, hidden winDialog(if open)
             DiscsWrapper.Visibility = Visibility.Visible;
@@ -130,24 +128,23 @@ namespace TuermeVonHanoi
 
         private void button_Speak_Click(object sender, EventArgs e)
         {
-            _hideButton(ButtonSpeak);
-            _showButton(ButtonSpeakCancel);
+            //hideButton(ButtonSpeak);
+            //showButton(ButtonSpeakCancel);
 
-            speakMode.start();
+            //speakMode.start();
 
             Messages.Text = "Speak!";
         }
 
         private void button_SpeakCancel_Click(object sender, EventArgs e)
         {
-            _showButton(ButtonSpeak);
-            _hideButton(ButtonSpeakCancel);
+            //_showButton(ButtonSpeak);
+            //_hideButton(ButtonSpeakCancel);
 
-            speakMode.stop();
+            //speakMode.stop();
 
             Messages.Text = "Speak!";
         }
-
 
         /// <summary>
         /// handle click on canvas element
@@ -221,22 +218,6 @@ namespace TuermeVonHanoi
             WinDialog.Visibility = Visibility.Visible;
         }
 
-
-        /// <summary>
-        /// speak handle
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void speakHandle(object sender, EventArgs e)
-        {
-            SpeechRecognizedEventArgs ev = (SpeechRecognizedEventArgs)e;
-            String[] result = ev.Result.Semantics.Value.ToString().Split(';');
-
-            Canvas fromCanvas = (Int32.Parse(result[0]) == 1) ? LeftCanvas : (Int32.Parse(result[0]) == 2) ? MidCanvas : RightCanvas;
-            Canvas toCanvas = (Int32.Parse(result[1]) == 1) ? LeftCanvas : (Int32.Parse(result[1]) == 2) ? MidCanvas : RightCanvas;
-
-            game.move(fromCanvas, toCanvas);
-        }
 
         private void GameGrid_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
