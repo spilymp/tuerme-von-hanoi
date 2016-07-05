@@ -36,10 +36,8 @@
             <ColumnDefinition Width="Auto" MinWidth="150" />
         </Grid.ColumnDefinitions>
 
-        <!--
         <Button Name="ButtonSpeak" Grid.Column="0" Grid.Row="0" Content="Speak" HorizontalAlignment="Left" VerticalAlignment="Stretch" Click="button_Speak_Click" Visibility="Hidden" IsEnabled="False"/>
         <Button Name="ButtonSpeakCancel" Grid.Column="0" Grid.Row="0" Content="Cancel" HorizontalAlignment="Left" VerticalAlignment="Stretch" Click="button_SpeakCancel_Click" Visibility="Hidden" IsEnabled="False"/>
-        -->
         <Label Name="Titel" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="14" Content="Türme von Hanoi" />
         <TextBlock Name="Messages" Grid.Column="2" Grid.Row="0" Margin="10, 5" Padding="10, 5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Text="{Binding Messages, Mode=OneWayToSource}"/>
 

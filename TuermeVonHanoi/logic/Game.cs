@@ -11,7 +11,6 @@ using System.Windows.Threading;
 using System.Collections.Generic;
 using TuermeVonHanoi.logic;
 using TuermeVonHanoi;
-using System.Speech.Recognition;
 
 namespace logic.TuermeVonHanoi
 {
@@ -35,7 +34,6 @@ namespace logic.TuermeVonHanoi
 
         /* event success */
         public event EventHandler Success;
-        public event EventHandler Exit;
 
         /* for async solve */
         private Task solveTask;
@@ -52,14 +50,6 @@ namespace logic.TuermeVonHanoi
         List<double> gesture;
         Worker workerObject;
 
-        /* SpeakMode */
-        private GameSpeakMode speakMode;
-
-        /* Slot */
-        string slot1 = null;
-        int slot2 = 0;
-        int slot3 = 0;
-
         public Game(Canvas canvasLeft, Canvas canvasMiddle, Canvas canvasRight, Dispatcher dispatcher)
         {
             this._canvasLeft = canvasLeft;
@@ -67,9 +57,6 @@ namespace logic.TuermeVonHanoi
             this._canvasRight = canvasRight;
 
             this.Dispatcher = dispatcher;
-
-            this.speakMode = new GameSpeakMode();
-            this.speakMode.ValueChanged += this.speakHandle;
         }
 
         /// <summary>
@@ -86,8 +73,6 @@ namespace logic.TuermeVonHanoi
             _clearCanvas();
             _buildCanvas();
 
-            speakMode.start();
-
             cts = new CancellationTokenSource();
             ct = cts.Token;
 
@@ -103,7 +88,6 @@ namespace logic.TuermeVonHanoi
         /// </summary>
         public void exit()
         {
-            speakMode.stop();
             _clearCanvas();
         }
 
@@ -284,12 +268,6 @@ namespace logic.TuermeVonHanoi
             }
         }
 
-        public void isExit()
-        {
-            EventHandler handler = Exit;
-            if (handler != null) handler(this, EventArgs.Empty);
-        }
-
         public void solveStop()
         {
             if (cts != null) cts.Cancel();
@@ -329,8 +307,7 @@ namespace logic.TuermeVonHanoi
 
             string message = "";
 
-            switch (gestures)
-            {
+            switch (gestures) {
                 case Gestures.ONE2TWO:
                     {
                         message = "Move from 1 to 2";
@@ -413,83 +390,5 @@ namespace logic.TuermeVonHanoi
 
             return message;
         }
-
-        /// <summary>
-        /// speak handle
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void speakHandle(object sender, EventArgs e)
-        {
-            SpeechRecognizedEventArgs ev = (SpeechRecognizedEventArgs)e;
-            String[] result = ev.Result.Semantics.Value.ToString().Split(';');
-
-            Console.WriteLine(result[0]);
-
-            if (slot1 == null)
-            {
-                slot1 = result[0];
-                speakMode.loadSlot2();
-            }
-            else if (slot1 != null && slot2 == 0)
-            {
-                if (slot1 == "close" && result[0] == "4")
-                {
-                    _resetSlots();
-                    isExit();
-                }
-                else if (slot1 == "put" && result[0] != "4")
-                {
-                    slot2 = Int32.Parse(result[0]);
-                    speakMode.loadSlot3();
-                }
-                else if(slot1 == "put" && result[0] == "4")
-                {
-                    slot2 = (_canvasLeft.IsMouseOver) ? 1 : (_canvasMiddle.IsMouseOver) ? 2 : (_canvasRight.IsMouseOver) ? 3 : 0;
-                    speakMode.loadSlot3();
-                }
-                else
-                {
-                    speakMode.loadSlot2();
-                }
-            }
-            else if (slot1 != null && slot2 != 0 && slot3 == 0)
-            {
-                Canvas from;
-                Canvas to;
-
-                slot3 = Int32.Parse(result[0]);
-                from = (slot2 == 1) ? _canvasLeft : (slot2 == 2) ? _canvasMiddle : _canvasRight;
-
-                if (slot3 != 4)
-                {
-                    to = (slot3 == 1) ? _canvasLeft : (slot3 == 2) ? _canvasMiddle : _canvasRight;
-                }
-                else
-                {
-                    to = (_canvasLeft.IsMouseOver) ? _canvasLeft : (_canvasMiddle.IsMouseOver) ? _canvasMiddle : (_canvasRight.IsMouseOver) ? _canvasRight : null;
-                }
-
-                if(to != null && from != null) move(from, to);
-
-                _resetSlots();
-            }
-            else
-            {
-                _resetSlots();
-            }
-
-        }
-
-        private void _resetSlots()
-        {
-            slot1 = null;
-            slot2 = 0;
-            slot3 = 0;
-
-            speakMode.loadSlot1();
-        }
     }
-
-
 }
