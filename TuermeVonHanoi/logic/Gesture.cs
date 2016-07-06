@@ -11,6 +11,7 @@ namespace TuermeVonHanoi.logic
 {
     class Gesture
     {
+        /*
         double[] gestureOne2Two_1 = new double[] { 0, 0, 0, 129.2894, 177.9627, 178.6196, 176.8365, 171.1063, 175.684, 139.0856, 0, 40.4462, 43.394, 60.0184, 80.1807, 92.406, 108.4349, 116.1139, 0, 0, 0, 0, 150.3763, 147.9895, 155.8871, 166.9307, 167.8729, 168.518, 0, 0, 0, 0, 142.5337, 154.0124, 175.6777, 175.8919, 139.0634, 112.2372, 74.0657, 71.3996, 67.2638, 77.3914, 59.226, 101.4572, 124.8907, 0, 0, 144.6052, 150.5142, 156.1247, 156.2113, 0, 0 };
         double[] gestureOne2Two_2 = new double[] { 0, 0, 114.444, 173.0728, 174.462, 178.2101, 168.4602, 178.6173, 170.7775, 166.7486, 0, 0, 35.0778, 32.2389, 46.5786, 71.9395, 81.3475, 82.5686, 0, 0, 175.0303, 178.6028, 178.9678, 179.6292, 175.8724, 176.2916, 176.3255, 0, 0, 0, 138.6412, 147.7244, 177.3739, 171.2825, 145.5932, 87.3467, 64.3845, 51.3837, 63.4793, 66.9544, 81.9057, 127.5963, 0, 141.6913, 129.5386, 140.8555, 159.0481, 157.9247, 159.0832, 155.6207, 0 };
         double[] gestureOne2Two_3 = new double[] { 0, 0, 0, 173.8482, 179.1575, 174.6203, 177.9691, 173.6974, 178.7826, 166.6287, 158.3396, 0, 38.6598, 34.2824, 47.4744, 82.3356, 105.6422, 120.9638, 124.992, 0, 0, 0, 0, 0, 0, 129.4623, 140.5993, 151.3269, 157.3801, 160.71, 160.887, 161.3999, 0, 162.4991, 163.9926, 0, 0, 0, 0, 0, 0, 0, 0, 0, 119.1161, 115.8004, 139.5784, 167.6226, 122.9998, 126.8616, 67.613, 48.6914, 63.0478, 64.9533, 0, 144.0801, 153.477, 145.2585, 147.6573, 155.6199, 0, 0 };
@@ -43,6 +44,7 @@ namespace TuermeVonHanoi.logic
         double[] gestureRefresh_2 = new double[] { 0, 0, 150.8411, 150.8569, 102.0694, 57.4466, 57.8883, 23.8655, 0.7045, 173.2902 };
         double[] gestureRefresh_3 = new double[] { 0, 0, 142.9055, 140.0063, 86.189, 62.0542, 117.1916, 15.3933, 0.1061, 0 };
 
+        */
         double[] gestureOne_1 = new double[] { 0, 0, 168.4244, 174.9364, 0, 59.6346, 64.6841, 126.3868, 149.513, 0 };
         double[] gestureOne_2 = new double[] { 0, 0, 160.3462, 168.7379, 177.8789, 159.8637, 52.0284, 60.7086, 102.4998, 148.431, 0 };
         double[] gestureOne_3 = new double[] { 0, 0, 172.4762, 175.8611, 177.8014, 167.7615, 51.4108, 54.3276, 60.116, 80.2292, 103.4732, 114.3573, 124.7891, 0 };
@@ -71,6 +73,7 @@ namespace TuermeVonHanoi.logic
                 return Gestures.NONE;
             }
 
+            /*
             double dtw_One2Two = Math.Min(DTW(gestureOne2Two_1, inputGesture), Math.Min(DTW(gestureOne2Two_2, inputGesture), DTW(gestureOne2Two_3, inputGesture)));
             double dtw_One2Three = Math.Min(DTW(gestureOne2Three_1, inputGesture), Math.Min(DTW(gestureOne2Three_2, inputGesture), DTW(gestureOne2Three_3, inputGesture)));
 
@@ -82,6 +85,7 @@ namespace TuermeVonHanoi.logic
 
             double dtw_Solve = Math.Min(DTW(gestureSolve_1, inputGesture), Math.Min(DTW(gestureSolve_2, inputGesture), DTW(gestureSolve_3, inputGesture)));
             double dtw_Refresh = Math.Min(DTW(gestureRefresh_1, inputGesture), Math.Min(DTW(gestureRefresh_2, inputGesture), DTW(gestureRefresh_3, inputGesture)));
+            */
 
             double dtw_One = Math.Min(DTW(gestureOne_1, inputGesture), Math.Min(DTW(gestureOne_2, inputGesture), DTW(gestureOne_3, inputGesture)));
             double dtw_Two = Math.Min(DTW(gestureTwo_1, inputGesture), Math.Min(DTW(gestureTwo_2, inputGesture), DTW(gestureTwo_3, inputGesture)));
@@ -91,6 +95,7 @@ namespace TuermeVonHanoi.logic
             double dtw_Close2 = Math.Min(DTW(gestureClose2_1, inputGesture), Math.Min(DTW(gestureClose2_2, inputGesture), DTW(gestureClose2_3, inputGesture)));
 
             List<double> values = new List<double>();
+            /*
             values.Add(dtw_One2Two);
             values.Add(dtw_One2Three);
             values.Add(dtw_Two2Three);
@@ -100,6 +105,7 @@ namespace TuermeVonHanoi.logic
 
             values.Add(dtw_Solve);
             values.Add(dtw_Refresh);
+            */
 
             values.Add(dtw_One);
             values.Add(dtw_Two);
@@ -108,6 +114,7 @@ namespace TuermeVonHanoi.logic
             values.Add(dtw_Close1);
             values.Add(dtw_Close2);
 
+            /*
             if (values.Min() == dtw_One2Two) return Gestures.ONE2TWO;
             if (values.Min() == dtw_One2Three) return Gestures.ONE2THREE;
             if (values.Min() == dtw_Two2Three) return Gestures.TWO2THREE;
@@ -116,6 +123,7 @@ namespace TuermeVonHanoi.logic
             if (values.Min() == dtw_Three2Two) return Gestures.THREE2TWO;
             if (values.Min() == dtw_Solve) return Gestures.SOLVE;
             if (values.Min() == dtw_Refresh) return Gestures.REFRESH;
+            */
             if (values.Min() == dtw_One) return Gestures.ONE;
             if (values.Min() == dtw_Two) return Gestures.TWO;
             if (values.Min() == dtw_Three) return Gestures.THREE;

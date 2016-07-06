@@ -56,6 +56,7 @@ namespace logic.TuermeVonHanoi
         private GameSpeakMode speakMode;
 
         /* Slot */
+        InputTypes inputType = InputTypes.NO;
         KeyWords slot1 = KeyWords.NO;
         KeyWords slot2 = KeyWords.NO;
         KeyWords slot3 = KeyWords.NO;
@@ -331,99 +332,103 @@ namespace logic.TuermeVonHanoi
 
             string message = "";
 
-            switch (gestures)
+            if (inputType == InputTypes.NO) inputType = InputTypes.GESTURE;
+            if (inputType == InputTypes.GESTURE)
             {
-                case Gestures.ONE2TWO:
-                    {
-                        message = "Move from 1 to 2";
-                        move(_canvasLeft, _canvasMiddle);
-                        break;
-                    }
-                case Gestures.ONE2THREE:
-                    {
-                        message = "Move from 1 to 3";
-                        move(_canvasLeft, _canvasRight);
-                        break;
-                    }
-                case Gestures.TWO2ONE:
-                    {
-                        message = "Move from 2 to 1";
-                        move(_canvasMiddle, _canvasLeft);
-                        break;
-                    }
-                case Gestures.TWO2THREE:
-                    {
-                        message = "Move from 2 to 3";
-                        move(_canvasMiddle, _canvasRight);
-                        break;
-                    }
-                case Gestures.THREE2ONE:
-                    {
-                        message = "Move from 3 to 1";
-                        move(_canvasRight, _canvasLeft);
-                        break;
-                    }
-                case Gestures.THREE2TWO:
-                    {
-                        message = "Move from 3 to 2";
-                        move(_canvasRight, _canvasMiddle);
-                        break;
-                    }
-                case Gestures.SOLVE:
-                    {
-                        message = "Reset and solve current game.";
-                        solve();
-                        break;
-                    }
-                case Gestures.REFRESH:
-                    {
-                        message = "Refresh current game.";
-                        refresh();
-                        break;
-                    }
-                case Gestures.ONE:
-                    {
-                        if (slot1 == KeyWords.NO) setSlot1(KeyWords.PUT);
-                        if (slot1 == KeyWords.PUT && slot2 == KeyWords.NO) setSlot2(KeyWords.CANVAS_LEFT);
-                        else if (slot1 == KeyWords.PUT && slot3 == KeyWords.NO) setSlot3(KeyWords.CANVAS_LEFT);
-                        message = "ONE";
-                        break;
-                    }
-                case Gestures.TWO:
-                    {
-                        if (slot1 == KeyWords.NO) setSlot1(KeyWords.PUT);
-                        if (slot1 == KeyWords.PUT && slot2 == KeyWords.NO) setSlot2(KeyWords.CANVAS_MIDDLE);
-                        else if (slot1 == KeyWords.PUT && slot3 == KeyWords.NO) setSlot3(KeyWords.CANVAS_MIDDLE);
-                        message = "TWO";
-                        break;
-                    }
-                case Gestures.THREE:
-                    {
-                        if (slot1 == KeyWords.NO) setSlot1(KeyWords.PUT);
-                        if (slot1 == KeyWords.PUT && slot2 == KeyWords.NO) setSlot2(KeyWords.CANVAS_RIGHT);
-                        else if (slot1 == KeyWords.PUT && slot3 == KeyWords.NO) setSlot3(KeyWords.CANVAS_RIGHT);
-                        message = "THREE";
-                        break;
-                    }
-                case Gestures.CLOSE_1:
-                    {
-                        if (slot1 == KeyWords.NO) setSlot1(KeyWords.CLOSE);
-                        message = "CLOSE Gesture 1";
-                        break;
-                    }
-                case Gestures.CLOSE_2:
-                    {
-                        if (slot1 == KeyWords.CLOSE) setSlot2(KeyWords.CLOSE);
-                        message = "CLOSE Gesture 2";
-                        break;
-                    }
-                default:
-                    {
-                        message = "No Gesture identified.";
-                        break;
-                    }
-            }
 
+
+                switch (gestures)
+                {
+                    /*
+                    case Gestures.ONE2TWO:
+                        {
+                            message = "Move from 1 to 2";
+                            move(_canvasLeft, _canvasMiddle);
+                            break;
+                        }
+                    case Gestures.ONE2THREE:
+                        {
+                            message = "Move from 1 to 3";
+                            move(_canvasLeft, _canvasRight);
+                            break;
+                        }
+                    case Gestures.TWO2ONE:
+                        {
+                            message = "Move from 2 to 1";
+                            move(_canvasMiddle, _canvasLeft);
+                            break;
+                        }
+                    case Gestures.TWO2THREE:
+                        {
+                            message = "Move from 2 to 3";
+                            move(_canvasMiddle, _canvasRight);
+                            break;
+                        }
+                    case Gestures.THREE2ONE:
+                        {
+                            message = "Move from 3 to 1";
+                            move(_canvasRight, _canvasLeft);
+                            break;
+                        }
+                    case Gestures.THREE2TWO:
+                        {
+                            message = "Move from 3 to 2";
+                            move(_canvasRight, _canvasMiddle);
+                            break;
+                        }
+                    case Gestures.SOLVE:
+                        {
+                            message = "Reset and solve current game.";
+                            solve();
+                            break;
+                        }
+                    case Gestures.REFRESH:
+                        {
+                            message = "Refresh current game.";
+                            refresh();
+                            break;
+                        }
+                        */
+                    case Gestures.ONE:
+                        {
+                            if (slot2 == KeyWords.NO) setSlot2(KeyWords.CANVAS_LEFT);
+                            else if (slot3 == KeyWords.NO) setSlot3(KeyWords.CANVAS_LEFT);
+                            message = "ONE";
+                            break;
+                        }
+                    case Gestures.TWO:
+                        {
+                            if (slot2 == KeyWords.NO) setSlot2(KeyWords.CANVAS_MIDDLE);
+                            else if (slot3 == KeyWords.NO) setSlot3(KeyWords.CANVAS_MIDDLE);
+                            message = "TWO";
+                            break;
+                        }
+                    case Gestures.THREE:
+                        {
+                            if (slot2 == KeyWords.NO) setSlot2(KeyWords.CANVAS_RIGHT);
+                            else if (slot3 == KeyWords.NO) setSlot3(KeyWords.CANVAS_RIGHT);
+                            message = "THREE";
+                            break;
+                        }
+                    case Gestures.CLOSE_1:
+                        {
+                            if (slot1 == KeyWords.NO) setSlot1(KeyWords.CLOSE);
+                            message = "CLOSE Gesture 1";
+                            break;
+                        }
+                    case Gestures.CLOSE_2:
+                        {
+                            if (slot1 == KeyWords.CLOSE) setSlot2(KeyWords.CLOSE);
+                            message = "CLOSE Gesture 2";
+                            break;
+                        }
+                    default:
+                        {
+                            message = "No Gesture identified.";
+                            break;
+                        }
+                }
+            }
 
             return message;
         }
@@ -432,13 +437,16 @@ namespace logic.TuermeVonHanoi
         {
             KeyWords key;
 
-            if (element == _canvasLeft) key = KeyWords.CANVAS_LEFT;
-            else if (element == _canvasMiddle) key = KeyWords.CANVAS_MIDDLE;
-            else key = KeyWords.CANVAS_RIGHT;
+            if (inputType == InputTypes.NO) inputType = InputTypes.CLICK;
+            if (inputType == InputTypes.CLICK)
+            {
+                if (element == _canvasLeft) key = KeyWords.CANVAS_LEFT;
+                else if (element == _canvasMiddle) key = KeyWords.CANVAS_MIDDLE;
+                else key = KeyWords.CANVAS_RIGHT;
 
-            if (slot1 == KeyWords.NO) setSlot1(KeyWords.PUT);
-            if (slot1 == KeyWords.PUT && slot2 == KeyWords.NO) setSlot2(key);
-            else if (slot1 == KeyWords.PUT && slot3 == KeyWords.NO) setSlot3(key);           
+                if (slot2 == KeyWords.NO) setSlot2(key);
+                else if (slot3 == KeyWords.NO) setSlot3(key);
+            }        
         }
 
         /// <summary>
@@ -450,25 +458,31 @@ namespace logic.TuermeVonHanoi
         {
             SpeechRecognizedEventArgs ev = (SpeechRecognizedEventArgs)e;
             String[] resultArray = ev.Result.Semantics.Value.ToString().Split(';');
-            int result = Int32.Parse(resultArray[0]);          
+            int result = Int32.Parse(resultArray[0]);
 
-            //if slot1
-            if(slot1 == KeyWords.NO)
+            if (inputType == InputTypes.NO) inputType = InputTypes.SPEAK;
+            if (inputType == InputTypes.SPEAK)
             {
-                KeyWords key = (result == 1) ? KeyWords.PUT : KeyWords.CLOSE;
-                setSlot1(key);
-            }
+                //if slot1
+                if (slot1 == KeyWords.NO)
+                {
+                    KeyWords key = (result == 1) ? KeyWords.PUT : KeyWords.CLOSE;
+                    setSlot1(key);
+                    speakMode.loadSlot2();
+                }
 
-            //if slot2
-            else if (slot1 != KeyWords.NO && slot2 == KeyWords.NO)
-            {
-                setSlot2(_getKeyWordFromNumber(result));
-            } 
+                //if slot2
+                else if (slot1 != KeyWords.NO && slot2 == KeyWords.NO)
+                {
+                    setSlot2(_getKeyWordFromNumber(result));
+                    speakMode.loadSlot3();
+                }
 
-            //if slot3
-            else if (slot1 != KeyWords.NO && slot2 != KeyWords.NO && slot3 == KeyWords.NO)
-            {
-                setSlot3(_getKeyWordFromNumber(result));
+                //if slot3
+                else if (slot1 != KeyWords.NO && slot2 != KeyWords.NO && slot3 == KeyWords.NO)
+                {
+                    setSlot3(_getKeyWordFromNumber(result));
+                }
             }
         }
 
@@ -483,11 +497,20 @@ namespace logic.TuermeVonHanoi
             CANVAS_RIGHT
         }
 
+        enum InputTypes
+        {
+            NO,
+            CLICK,
+            SPEAK,
+            GESTURE
+        }
+
         private void _resetSlots()
         {
             slot1 = KeyWords.NO;
             slot2 = KeyWords.NO;
             slot3 = KeyWords.NO;
+            inputType = InputTypes.NO;
 
             speakMode.loadSlot1();
         }
@@ -496,7 +519,6 @@ namespace logic.TuermeVonHanoi
         {
             Console.WriteLine("Setze Slot 1 mit " + keyWord);
             slot1 = keyWord;
-            speakMode.loadSlot2();
 
             return false;
         }
@@ -505,16 +527,8 @@ namespace logic.TuermeVonHanoi
         {
             Console.WriteLine("Setze Slot 2 mit " + keyWord);
 
-            if (slot1 == KeyWords.PUT)
+            if (slot1 == KeyWords.CLOSE && keyWord == KeyWords.CLOSE)
             {
-                slot2 = keyWord;
-
-                _getCanvasFromKeyWord(keyWord).Children.OfType<Rectangle>().LastOrDefault().Fill = new SolidColorBrush(System.Windows.Media.Colors.CadetBlue);
-                speakMode.loadSlot3();
-
-                return true;
-            } 
-            else if(slot1 == KeyWords.CLOSE && keyWord == KeyWords.CLOSE){
                 _resetSlots();
                 isExit();
 
@@ -522,17 +536,18 @@ namespace logic.TuermeVonHanoi
             }
             else
             {
-                _resetSlots();
+                slot2 = keyWord;
+                Canvas temp = _getCanvasFromKeyWord(keyWord);
+                if (temp != null) temp.Children.OfType<Rectangle>().LastOrDefault().Fill = new SolidColorBrush(System.Windows.Media.Colors.CadetBlue);
+                return true;
             }
-
-            return false;
         }
 
         private bool setSlot3(KeyWords keyWord)
         {
             Console.WriteLine("Setze Slot 3 mit " + keyWord);
 
-            if (slot1 == KeyWords.PUT && slot2 != KeyWords.NO)
+            if (slot2 != KeyWords.NO)
             {
                 Canvas fromCanvas, toCanvas;
 
@@ -582,13 +597,13 @@ namespace logic.TuermeVonHanoi
             if (num == 1) el = KeyWords.CANVAS_LEFT;
             else if (num == 2) el = KeyWords.CANVAS_MIDDLE;
             else if (num == 3) el = KeyWords.CANVAS_RIGHT;
-            else if (num == 4 && slot1 == KeyWords.PUT)
+            else if (num == 4 && slot1 == KeyWords.PUT && inputType == InputTypes.SPEAK)
             {
                 if (_canvasLeft.IsMouseOver) el = KeyWords.CANVAS_LEFT;
                 else if (_canvasMiddle.IsMouseOver) el = KeyWords.CANVAS_MIDDLE;
                 else if (_canvasRight.IsMouseOver) el = KeyWords.CANVAS_RIGHT;
             }
-            else if(num == 4 && slot1 == KeyWords.CLOSE)
+            else if (num == 4 && slot1 == KeyWords.CLOSE)
             {
                 el = KeyWords.CLOSE;
             }
