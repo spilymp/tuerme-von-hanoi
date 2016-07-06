@@ -32,6 +32,7 @@ namespace TuermeVonHanoi
             // EventHandle for success
             this.game.Success += this._toggleWinDialog;
             this.game.Exit += this.button_Exit_Click;
+            this.game.Message += this.MessageEventFire;
         }
 
         /// <summary>
@@ -178,8 +179,23 @@ namespace TuermeVonHanoi
 
         private void GameGrid_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
-            string message = game.stopGestureRecognition();
-            Messages.Text = message;
+            game.stopGestureRecognition();
         }
+
+        public void setMessage(String text)
+        {
+            Messages.Text = text;
+        }
+
+        private void MessageEventFire(object sender, Game.MessageEventArgs args)
+        {
+            Dispatcher.BeginInvoke(
+           (Action)(() =>
+           {
+               Messages.Text = args.MessageEventString;
+           })
+           );
+        }
+
     }
 }

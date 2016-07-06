@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Timers;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media;
@@ -36,6 +37,7 @@ namespace logic.TuermeVonHanoi
         /* event success */
         public event EventHandler Success;
         public event EventHandler Exit;
+        public event EventHandler<MessageEventArgs> Message;
 
         /* for async solve */
         private Task solveTask;
@@ -55,11 +57,16 @@ namespace logic.TuermeVonHanoi
         /* SpeakMode */
         private GameSpeakMode speakMode;
 
+        /* Timer for slots */
+        System.Timers.Timer timer;
+
         /* Slot */
         InputTypes inputType = InputTypes.NO;
         KeyWords slot1 = KeyWords.NO;
         KeyWords slot2 = KeyWords.NO;
         KeyWords slot3 = KeyWords.NO;
+
+        Rectangle lastRect;
 
         public Game(Canvas canvasLeft, Canvas canvasMiddle, Canvas canvasRight, Dispatcher dispatcher)
         {
@@ -71,6 +78,11 @@ namespace logic.TuermeVonHanoi
 
             this.speakMode = new GameSpeakMode();
             this.speakMode.ValueChanged += this.speakHandle;
+
+            timer = new System.Timers.Timer();
+            timer.Elapsed += new ElapsedEventHandler(DisplayTimeEvent);
+            timer.Interval = 4000;
+            timer.Start();
         }
 
         /// <summary>
@@ -292,6 +304,31 @@ namespace logic.TuermeVonHanoi
             if (handler != null) handler(this, EventArgs.Empty);
         }
 
+        public void MessageEvent(string message)
+        {
+            EventHandler<MessageEventArgs> handler = Message;
+            if (handler != null) handler(this, new MessageEventArgs(message));
+        }
+
+        public class MessageEventArgs : EventArgs
+        {
+            public string MessageEventString { get; set; }
+
+            public MessageEventArgs(string text)
+            {
+                this.MessageEventString = text;
+            }
+        }
+
+        public void DisplayTimeEvent(object source, ElapsedEventArgs e)
+        {
+            if (inputType != InputTypes.NO)
+            {
+                Console.WriteLine("Reset Slots.");
+                this._resetSlots();
+            }
+        }
+
         public void solveStop()
         {
             if (cts != null) cts.Cancel();
@@ -304,7 +341,7 @@ namespace logic.TuermeVonHanoi
             gestureThread.Start();
         }
 
-        public string stopGestureRecognition()
+        public void stopGestureRecognition()
         {
             try
             {
@@ -393,44 +430,42 @@ namespace logic.TuermeVonHanoi
                         {
                             if (slot2 == KeyWords.NO) setSlot2(KeyWords.CANVAS_LEFT);
                             else if (slot3 == KeyWords.NO) setSlot3(KeyWords.CANVAS_LEFT);
-                            message = "ONE";
+                            MessageEvent("Gesture 1");
                             break;
                         }
                     case Gestures.TWO:
                         {
                             if (slot2 == KeyWords.NO) setSlot2(KeyWords.CANVAS_MIDDLE);
                             else if (slot3 == KeyWords.NO) setSlot3(KeyWords.CANVAS_MIDDLE);
-                            message = "TWO";
+                            MessageEvent("Gesture 2");
                             break;
                         }
                     case Gestures.THREE:
                         {
                             if (slot2 == KeyWords.NO) setSlot2(KeyWords.CANVAS_RIGHT);
                             else if (slot3 == KeyWords.NO) setSlot3(KeyWords.CANVAS_RIGHT);
-                            message = "THREE";
+                            MessageEvent("Gesture 3");
                             break;
                         }
                     case Gestures.CLOSE_1:
                         {
                             if (slot1 == KeyWords.NO) setSlot1(KeyWords.CLOSE);
-                            message = "CLOSE Gesture 1";
+                            MessageEvent("Close Gesture 1");
                             break;
                         }
                     case Gestures.CLOSE_2:
                         {
                             if (slot1 == KeyWords.CLOSE) setSlot2(KeyWords.CLOSE);
-                            message = "CLOSE Gesture 2";
+                            MessageEvent("Close Gesture 2");
                             break;
                         }
                     default:
                         {
-                            message = "No Gesture identified.";
+                            MessageEvent("No Gesture identified");
                             break;
                         }
                 }
             }
-
-            return message;
         }
 
         public void clickHandle(Canvas element)
@@ -446,7 +481,7 @@ namespace logic.TuermeVonHanoi
 
                 if (slot2 == KeyWords.NO) setSlot2(key);
                 else if (slot3 == KeyWords.NO) setSlot3(key);
-            }        
+            }
         }
 
         /// <summary>
@@ -512,20 +547,32 @@ namespace logic.TuermeVonHanoi
             slot3 = KeyWords.NO;
             inputType = InputTypes.NO;
 
+            Dispatcher.BeginInvoke(
+                (Action)(() =>
+                {
+                    if (lastRect != null) lastRect.Fill = new SolidColorBrush(Colors.YellowGreen);
+                })
+                );
+
             speakMode.loadSlot1();
+            _resetTimer();
+
+            MessageEvent("Slots zurückgesetzt!");
         }
 
-        private bool setSlot1(KeyWords keyWord)
+        private void setSlot1(KeyWords keyWord)
         {
             Console.WriteLine("Setze Slot 1 mit " + keyWord);
-            slot1 = keyWord;
+            MessageEvent("Slot1 gesetzt!");
 
-            return false;
+            slot1 = keyWord;
+            _resetTimer();
         }
 
         private bool setSlot2(KeyWords keyWord)
         {
             Console.WriteLine("Setze Slot 2 mit " + keyWord);
+            MessageEvent("Slot2 gesetzt!");
 
             if (slot1 == KeyWords.CLOSE && keyWord == KeyWords.CLOSE)
             {
@@ -537,8 +584,13 @@ namespace logic.TuermeVonHanoi
             else
             {
                 slot2 = keyWord;
-                Canvas temp = _getCanvasFromKeyWord(keyWord);
-                if (temp != null) temp.Children.OfType<Rectangle>().LastOrDefault().Fill = new SolidColorBrush(System.Windows.Media.Colors.CadetBlue);
+                Rectangle temp = _getCanvasFromKeyWord(keyWord).Children.OfType<Rectangle>().LastOrDefault();
+                if (temp != null)
+                {
+                    temp.Fill = new SolidColorBrush(Colors.CadetBlue);
+                    lastRect = temp;
+                }
+                _resetTimer();
                 return true;
             }
         }
@@ -546,6 +598,7 @@ namespace logic.TuermeVonHanoi
         private bool setSlot3(KeyWords keyWord)
         {
             Console.WriteLine("Setze Slot 3 mit " + keyWord);
+            MessageEvent("Slot3 gesetzt!");
 
             if (slot2 != KeyWords.NO)
             {
@@ -611,5 +664,10 @@ namespace logic.TuermeVonHanoi
             return el;
         }
 
+        private void _resetTimer()
+        {
+            timer.Stop();
+            timer.Start();
+        }
     }
 }
